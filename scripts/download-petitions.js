@@ -1,4 +1,4 @@
-import fs from 'fs';
+const fs = require('fs');
 
 // TODO: make these configurable
 const PARLIAMENT = 4; // 2019-2024
