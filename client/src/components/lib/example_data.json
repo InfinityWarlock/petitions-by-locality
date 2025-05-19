@@ -1,0 +1,35 @@
+[
+    {
+        "name": "Hackney North & Stoke Newington",
+        "petitionList": [
+            { "name": "Outlaw all dogs.", "signatures": 2 },
+            { "name": "Legalise recreational heroine", "signatures": 10 },
+            {
+                "name": "Release all government classified data",
+                "signatures": 12542
+            }
+        ]
+    },
+    {
+        "name": "Holborn & St Pancras",
+        "petitionList": [
+            { "name": "Outlaw all dogs.", "signatures": 100 },
+            { "name": "Legalise recreational heroine", "signatures": 17 },
+            {
+                "name": "Release all government classified data",
+                "signatures": 6432
+            }
+        ]
+    },
+    {
+        "name": "Islington North",
+        "petitionList": [
+            { "name": "Outlaw all dogs.", "signatures": 4 },
+            { "name": "Legalise recreational heroine", "signatures": 15 },
+            {
+                "name": "Release all government classified data",
+                "signatures": 22343
+            }
+        ]
+    }
+]
