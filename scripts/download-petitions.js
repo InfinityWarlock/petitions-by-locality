@@ -1,68 +1,58 @@
+// Uncomment below for Node.js v17 or lower
+// const fetch = require('node-fetch');
+
 const fs = require('fs');
+const path = require('path');
+const cliProgress = require('cli-progress');
 
-// TODO: make these configurable
-const PARLIAMENT = 4; // 2019-2024
-const STATE = 'with_response'; // Only petitions with response
-const DATA_DIR = 'data/petitions/';
+const START_URL = 'https://petition.parliament.uk/petitions.json?state=all';
 
-async function fetchData(url) {
-  return await (await fetch(url)).json();
+async function fetchJson(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
+  return await res.json();
 }
 
-async function fetchPetition(petitionId) {
-  const url = `https://petition.parliament.uk/petitions/${petitionId}.json`;
-  return await fetchData(url);
-}
+async function fetchAllPetitions() {
+  let url = START_URL;
+  const allPetitions = [];
+  const progress = new cliProgress.SingleBar({
+    format: 'Progress |{bar}| {percentage}% | {value} petitions fetched',
+    barCompleteChar: '\u2588',
+    barIncompleteChar: '\u2591',
+    hideCursor: true
+  });
 
-async function getPetitionIds() {
-  console.log(`Fetching petitions with state: ${STATE}`);
+  let totalCount = 0;
+  progress.start(0, 0);
 
-  const inititialURL = `https://petition.parliament.uk/archived/petitions.json?page=1&parliament=${PARLIAMENT}&state=${STATE}`;
-  let petitionsData = await fetchData(inititialURL);
-  let petitionsIds = petitionsData.data.map(petition => petition.id);
+  while (url) {
+    const listPage = await fetchJson(url);
+    const petitions = listPage.data;
 
-  while (petitionsData.links.next) {
-    const nextURL = petitionsData.links.next;
-    petitionsData = await fetchData(nextURL);
-    petitionsIds = [
-      ...petitionsIds,
-      ...petitionsData.data.map(petition => petition.id)
-    ];
-  }
+    for (const petition of petitions) {
+      const detailUrl = petition.links?.self;
+      if (!detailUrl) continue;
 
-  console.log(`Found ${petitionsIds.length} petitions`);
-
-  return petitionsIds;
-}
-
-const downloadPetitionsToFile = async () => {
-  const petitionIds = await getPetitionIds();
-
-  const now = new Date().toISOString();
-
-  const directory = `${DATA_DIR}/${now}`;
-
-  console.log(`Downloading ${petitionIds.length} petitions to ${directory}`);
-
-  fs.mkdirSync(directory, { recursive: true });
-
-  let petitionsDownloaded = 0;
-  for (const petitionId of petitionIds) {
-    const petition = await fetchPetition(petitionId);
-
-    fs.writeFileSync(
-      `${directory}/${petitionId}.json`,
-      JSON.stringify(petition)
-    );
-
-    petitionsDownloaded += 1;
-
-    if (petitionsDownloaded % 100 === 0) {
-      console.log(`Downloaded ${petitionsDownloaded} petitions`);
+      try {
+        const detail = await fetchJson(detailUrl);
+        allPetitions.push(detail.data);
+        totalCount++;
+        progress.update(totalCount);
+      } catch (err) {
+        console.error(`Failed to fetch petition detail: ${detailUrl}`, err.message);
+      }
     }
+
+    url = listPage.links?.next || null;
   }
 
-  console.log(`Downloaded ${petitionIds.length} petitions`);
-};
+  progress.stop();
 
-downloadPetitionsToFile();
+  const filePath = path.join(__dirname, 'all_petitions.json');
+  fs.writeFileSync(filePath, JSON.stringify(allPetitions, null, 2), 'utf-8');
+  console.log(`✅ All petitions saved to ${filePath}`);
+}
+
+// Run the script
+fetchAllPetitions().catch(console.error);
