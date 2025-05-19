@@ -11,13 +11,13 @@ This is a WIP project.
 
 ## Plan (Very WIP)
  - Build an ETL pipeline. If/When we get to a production stage, we can run this on a set cadence.
- - Download the data for each petition
- - Transform it to be stored by constituency. For each consituency, we want each row/object to contain something like the following:
+ - Download the data for each petition - DONE
+ - Transform it to be stored by constituency. For each consituency, we want each row/object to contain something like the following: - SORT OF DONE
    - Petition id
    - Petition name
    - Signature count
    - Percentage of total signatures for that petition
- - Build a pretty frontend to display this
+ - Build a pretty frontend to display this - not currently pretty
 
 
 ## Potential TODOs:

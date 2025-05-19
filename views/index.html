@@ -153,29 +153,36 @@
     });
   }
 
-  function populateTable(data) {
-    const tbody = document.querySelector("#dataTable tbody");
-    tbody.innerHTML = "";
+ function populateTable(data) {
+  const tbody = document.querySelector("#dataTable tbody");
+  tbody.innerHTML = "";
 
-    if (!data || typeof data !== 'object') return;
+  if (!data || typeof data !== 'object') return;
 
-    const sortedEntries = Object.entries(data)
-      .sort((a, b) => b[1] - a[1]); // descending by count
+  const sortedEntries = Object.entries(data)
+    .sort((a, b) => b[1].count - a[1].count); // sort by count
 
-    sortedEntries.forEach(([petition, count]) => {
-      const row = document.createElement("tr");
+  sortedEntries.forEach(([petition, details]) => {
+    const row = document.createElement("tr");
 
-      const petitionCell = document.createElement("td");
-      petitionCell.textContent = petition;
+    const petitionCell = document.createElement("td");
+    const link = document.createElement("a");
+    link.href = `https://petition.parliament.uk/petitions/${details.id}`;
+    link.textContent = petition;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
 
-      const countCell = document.createElement("td");
-      countCell.textContent = count;
+    petitionCell.appendChild(link);
 
-      row.appendChild(petitionCell);
-      row.appendChild(countCell);
-      tbody.appendChild(row);
-    });
-  }
+    const countCell = document.createElement("td");
+    countCell.textContent = details.count;
+
+    row.appendChild(petitionCell);
+    row.appendChild(countCell);
+    tbody.appendChild(row);
+  });
+}
+
 </script>
 
 </body>
