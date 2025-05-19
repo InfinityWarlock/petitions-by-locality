@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--DISCLAIMER: I don't know react or any modern frameworks (lol) so this project doesn't currently use them-->
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Petitioners by Locality</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 0;
+      padding: 2rem;
+      background-color: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      margin-bottom: 1rem;
+    }
+
+    input[type="file"],
+    select {
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+
+    table {
+      width: 100%;
+      max-width: 800px;
+      border-collapse: collapse;
+      background-color: white;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f1f1f1;
+      font-weight: bold;
+    }
+
+    footer {
+      margin-top: auto;
+      padding: 1rem;
+      font-size: 0.85rem;
+      color: #666;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      th {
+        display: none;
+      }
+
+      td {
+        position: relative;
+        padding-left: 50%;
+      }
+
+      td::before {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 50%;
+        padding-left: 1rem;
+        font-weight: bold;
+        white-space: nowrap;
+      }
+
+      tr {
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #ccc;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Petitioners by Locality</h1>
+  <p>Select the constituencies_data.json file here.</p>
+  <input type="file" id="fileInput" accept=".json" />
+  <select id="constituencySelect" style="display:none;">
+    <option disabled selected>Choose a constituency</option>
+  </select>
+
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th>Locality</th>
+        <th>Count</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Data will be populated here -->
+    </tbody>
+  </table>
+
+  <footer>
+    Contains public sector information licensed under the Open Government Licence v3.0.
+  </footer>
+<script>
+  let fullData = {};
+
+  document.getElementById('fileInput').addEventListener('change', function (event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      try {
+        const data = JSON.parse(e.target.result);
+        fullData = data;
+        populateConstituencySelector(Object.keys(data));
+      } catch (err) {
+        alert("Error parsing JSON file.");
+        console.error(err);
+      }
+    };
+    reader.readAsText(file);
+  });
+
+  function populateConstituencySelector(constituencies) {
+    const select = document.getElementById("constituencySelect");
+    select.innerHTML = `<option disabled selected>Choose a constituency</option>`;
+    select.style.display = "inline-block";
+
+    constituencies.forEach(name => {
+      const option = document.createElement("option");
+      option.value = name;
+      option.textContent = name;
+      select.appendChild(option);
+    });
+
+    select.addEventListener("change", function () {
+      const selected = this.value;
+      const constituencyData = fullData[selected];
+      populateTable(constituencyData);
+    });
+  }
+
+  function populateTable(data) {
+    const tbody = document.querySelector("#dataTable tbody");
+    tbody.innerHTML = "";
+
+    if (!data || typeof data !== 'object') return;
+
+    const sortedEntries = Object.entries(data)
+      .sort((a, b) => b[1] - a[1]); // descending by count
+
+    sortedEntries.forEach(([petition, count]) => {
+      const row = document.createElement("tr");
+
+      const petitionCell = document.createElement("td");
+      petitionCell.textContent = petition;
+
+      const countCell = document.createElement("td");
+      countCell.textContent = count;
+
+      row.appendChild(petitionCell);
+      row.appendChild(countCell);
+      tbody.appendChild(row);
+    });
+  }
+</script>
+
+</body>
+</html>
