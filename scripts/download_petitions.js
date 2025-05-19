@@ -2,8 +2,6 @@
 // const fetch = require('node-fetch');
 
 const fs = require('fs');
-const path = require('path');
-const cliProgress = require('cli-progress');
 
 const START_URL = 'https://petition.parliament.uk/petitions.json?state=all';
 
@@ -13,18 +11,12 @@ async function fetchJson(url) {
   return await res.json();
 }
 
-async function fetchAllPetitions() {
+async function fetchAllPetitions(outputPath) {
   let url = START_URL;
   const allPetitions = [];
-  const progress = new cliProgress.SingleBar({
-    format: 'Progress |{bar}| {percentage}% | {value} petitions fetched',
-    barCompleteChar: '\u2588',
-    barIncompleteChar: '\u2591',
-    hideCursor: true
-  });
+  let count = 0;
 
-  let totalCount = 0;
-  progress.start(0, 0);
+  console.log(`Fetching petitions. This may take a while.\nCounter updates every 50.`);
 
   while (url) {
     const listPage = await fetchJson(url);
@@ -36,9 +28,12 @@ async function fetchAllPetitions() {
 
       try {
         const detail = await fetchJson(detailUrl);
+
+        // todo: filtering
         allPetitions.push(detail.data);
-        totalCount++;
-        progress.update(totalCount);
+
+        count++;
+        if (count % 50 == 0) process.stdout.write(`\rProcessed petitions: ${count}`);
       } catch (err) {
         console.error(`Failed to fetch petition detail: ${detailUrl}`, err.message);
       }
@@ -47,12 +42,12 @@ async function fetchAllPetitions() {
     url = listPage.links?.next || null;
   }
 
-  progress.stop();
+  process.stdout.write('\n'); // move to next line after done
 
-  const filePath = path.join(__dirname, 'all_petitions.json');
-  fs.writeFileSync(filePath, JSON.stringify(allPetitions, null, 2), 'utf-8');
-  console.log(`✅ All petitions saved to ${filePath}`);
+  fs.writeFileSync(outputPath, JSON.stringify(allPetitions, null, 2), 'utf-8');
+  console.log(`✅ All petitions saved to ${outputPath}`);
 }
 
+module.exports = fetchAllPetitions;
 // Run the script
-fetchAllPetitions().catch(console.error);
+// fetchAllPetitions().catch(console.error);

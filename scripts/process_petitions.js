@@ -48,7 +48,7 @@ function processPetition(petition, index, constituenciesData) {
 }
 
 // Main routine
-function main(output_path) {
+async function main(output_path) {
     let constituencies = [];
     let constituenciesData = {};
     let doneConstituencies = false; // this is stupid
@@ -68,8 +68,11 @@ function main(output_path) {
     });
    
     try { fs.writeFileSync(output_path, JSON.stringify(constituenciesData, null, 2)); } catch (e) { console.error('Failed to write JSON:', e); }
+    console.log(`Constituencies data output to ${output_path}. \n Select this file in the browser.`)
 
 }
 
+module.exports = main;
+
 // Run the script
-main('data\\constituencies_data.json');
+// main('data\\constituencies_data.json');
