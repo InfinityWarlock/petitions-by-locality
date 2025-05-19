@@ -18,3 +18,8 @@ This is a WIP project.
    - Signature count
    - Percentage of total signatures for that petition
  - Build a pretty frontend to display this
+
+
+## Potential TODOs:
+
+- Use vectors + grouping algorithm instead of "LLM please give me a topic" 

@@ -17,18 +17,55 @@ function loadPetitions(file) {
   }
 }
 
-// Placeholder for your custom processing logic
-function processPetition(petition, index) {
-  // TODO: Replace this with your actual processing
- 
+function getConstituencies(petition) {
+    let constituencies = []
+    petition.attributes.signatures_by_constituency.forEach((entry, index) => {
+        constituencies.push(entry.name)
+    })
+
+    return constituencies
+}
+
+function isIterable(value) {
+  return value != null && typeof value[Symbol.iterator] === 'function';
+}
+
+
+function processPetition(petition, index, constituenciesData) {
+
+    const allConstituencies = petition.attributes.signatures_by_constituency;
+
+    if (isIterable(allConstituencies)) {
+        for (const constituency of allConstituencies) {
+            constituenciesData[constituency.name][petition.attributes.action] = constituency.signature_count;
+        }  
+    }
+   
+    return constituenciesData;
 }
 
 // Main routine
 function main() {
-  const petitions = loadPetitions(filePath);
-  petitions.forEach((petition, index) => {
-    processPetition(petition, index);
-  });
+    let constituencies = [];
+    let constituenciesData = {};
+    let doneConstituencies = false; // this is stupid
+
+    
+    const petitions = loadPetitions(filePath);
+        petitions.forEach((petition, index) => {
+        if (!doneConstituencies) {
+            constituencies = getConstituencies(petition);
+            doneConstituencies = true;
+            constituencies.forEach(c => constituenciesData[c] = {});
+        }
+
+        constituenciesData = processPetition(petition, index, constituenciesData);
+
+
+    });
+   
+    try { fs.writeFileSync('constituencies_data.json', JSON.stringify(constituenciesData, null, 2)); } catch (e) { console.error('Failed to write JSON:', e); }
+
 }
 
 // Run the script
