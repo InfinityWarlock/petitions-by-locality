@@ -2,7 +2,7 @@
 
 This is a WIP project.
 
-## How to use me
+## How to install me
 
 1. Download (ie `$ git clone`). Currently no dependencies, so no need for `$ npm i`. 
 2. In the root of the repository, run: `$ node run_me.js`. 
@@ -11,10 +11,22 @@ This is a WIP project.
 ## TODOs:
 
 - Group petitions by topic (eg immigration, NHS) automatically. My suggestion: use an LLM to pull out topics from the descriptions of the petitions. 
-
+- Weight constituencies by population, not 1/650
 ## Licence for the petitions data 
 
 Contains public sector information licensed under the Open Government Licence v3.0.
+
+## Screenshots
+
+![image](https://github.com/user-attachments/assets/a3a05bcc-ad04-4170-9b8c-1b933c560a9e)
+Overview view 
+
+![image](https://github.com/user-attachments/assets/0845ab4b-e8d8-4dc7-8ba6-103b344ee10b)
+Detailed view 
+
+## What is "salience"?
+
+The measure for salience (which should definitely be updated if anyone knows a better one for this data!) works by calculating the ratio between (signatures in a constituency / all signatures) : (1/650). This assumes that each constituency has the same population. That way, if more than `1/650 * total signatures` people in your constituency have signed a petition, it is probably *more salient* in your local area than nationally. This is very much a WIP and rough measure.
 
 ## Old Readme 
 
