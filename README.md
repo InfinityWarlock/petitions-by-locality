@@ -4,7 +4,7 @@ This is a WIP project.
 
 ## How to use me
 
-1. Download (ie `$ $it clone`). Currently no dependencies, so no need for `$ npm i`. 
+1. Download (ie `$ git clone`). Currently no dependencies, so no need for `$ npm i`. 
 2. In the root of the repository, run: `$ node run_me.js`. 
 3. Open index.html in your browser and select `data/constituencies_data.json`. This process can 100% be improved, but it does work! 
 

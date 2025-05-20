@@ -37,7 +37,7 @@ function processPetition(petition, index, constituenciesData) {
 
     if (isIterable(allConstituencies)) {
         for (const constituency of allConstituencies) {
-            constituenciesData[constituency.name][petition.attributes.action] = {
+            constituenciesData.signaturesByConstituency[constituency.name][petition.attributes.action] = {
                 "count": constituency.signature_count,
                 "id": petition.id
             };
@@ -50,7 +50,10 @@ function processPetition(petition, index, constituenciesData) {
 // Main routine
 async function main(output_path) {
     let constituencies = [];
-    let constituenciesData = {};
+    let constituenciesData = {
+        signaturesByConstituency: {},
+        rawPetitionsData: {}
+    };
     let doneConstituencies = false; // this is stupid
 
     
@@ -59,14 +62,14 @@ async function main(output_path) {
         if (!doneConstituencies) {
             constituencies = getConstituencies(petition);
             doneConstituencies = true;
-            constituencies.forEach(c => constituenciesData[c] = {});
+            constituencies.forEach(c => constituenciesData.signaturesByConstituency[c] = {});
         }
 
         constituenciesData = processPetition(petition, index, constituenciesData);
 
 
     });
-   
+    constituenciesData.rawPetitionsData = petitions;
     try { fs.writeFileSync(output_path, JSON.stringify(constituenciesData, null, 2)); } catch (e) { console.error('Failed to write JSON:', e); }
     console.log(`Constituencies data output to ${output_path}. \n Select this file in the browser.`)
 

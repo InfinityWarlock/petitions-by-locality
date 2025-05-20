@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<!--DISCLAIMER: I don't know react or any modern frameworks (lol) so this project doesn't currently use them-->
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,13 +7,14 @@
   <style>
     body {
       font-family: system-ui, sans-serif;
-      margin: 0;
+      margin: 0 auto;
       padding: 2rem;
       background-color: #f9f9f9;
       display: flex;
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
+      max-width: 1200px;
       box-sizing: border-box;
     }
 
@@ -23,7 +23,8 @@
     }
 
     input[type="file"],
-    select {
+    select,
+    button.export-btn {
       margin-bottom: 1rem;
       padding: 0.5rem;
       font-size: 1rem;
@@ -31,12 +32,21 @@
 
     table {
       width: 100%;
-      max-width: 800px;
+      max-width: 1000px;
       border-collapse: collapse;
       background-color: white;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       border-radius: 8px;
       overflow: hidden;
+    }
+
+    table colgroup:first-of-type col {
+      background-color: #ffffff;
+    }
+
+    table colgroup:nth-of-type(2) col {
+      background-color: #f9fafe;
+      border-left: 2px solid #ccc;
     }
 
     th, td {
@@ -48,6 +58,33 @@
     th {
       background-color: #f1f1f1;
       font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f6f6f6;
+    }
+
+    .details-col,
+    .details-cell {
+      display: none;
+    }
+
+    .show-details .details-col,
+    .show-details .details-cell {
+      display: table-cell;
+    }
+
+    .toggle-btn-cell {
+      text-align: right;
+    }
+
+    #toggleDetailsBtn {
+      font-size: 0.9rem;
+      padding: 0.4rem 0.6rem;
+      cursor: pointer;
+      background-color: #eee;
+      border: 1px solid #ccc;
+      border-radius: 5px;
     }
 
     footer {
@@ -86,6 +123,11 @@
         margin-bottom: 1rem;
         border-bottom: 2px solid #ccc;
       }
+
+      .toggle-btn-cell {
+        text-align: left;
+        padding-top: 1rem;
+      }
     }
   </style>
 </head>
@@ -97,12 +139,29 @@
   <select id="constituencySelect" style="display:none;">
     <option disabled selected>Choose a constituency</option>
   </select>
+  <button class="export-btn" id="exportCsvBtn" style="display:none;">⬇️ Export to CSV</button>
 
   <table id="dataTable">
+    <colgroup>
+      <col />
+      <col />
+    </colgroup>
+    <colgroup class="detail-group">
+      <col class="details-col" />
+      <col class="details-col" />
+    </colgroup>
+    <colgroup>
+      <col />
+    </colgroup>
     <thead>
       <tr>
-        <th>Locality</th>
+        <th>Petition</th>
         <th>Count</th>
+        <th class="details-col">UK Total</th>
+        <th class="details-col">% from this Constituency</th>
+        <th class="toggle-btn-cell">
+          <button id="toggleDetailsBtn" style="display:none;">📦➡️</button>
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -113,77 +172,151 @@
   <footer>
     Contains public sector information licensed under the Open Government Licence v3.0.
   </footer>
-<script>
-  let fullData = {};
 
-  document.getElementById('fileInput').addEventListener('change', function (event) {
-    const file = event.target.files[0];
-    if (!file) return;
+  <script>
+    let fullData = {};
+    let signaturesByConstituency = {};
+    let rawPetitionsData = {};
+    let currentDisplayed = [];
 
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      try {
-        const data = JSON.parse(e.target.result);
-        fullData = data;
-        populateConstituencySelector(Object.keys(data));
-      } catch (err) {
-        alert("Error parsing JSON file.");
-        console.error(err);
-      }
-    };
-    reader.readAsText(file);
-  });
+    document.getElementById('fileInput').addEventListener('change', function (event) {
+      const file = event.target.files[0];
+      if (!file) return;
 
-  function populateConstituencySelector(constituencies) {
-    const select = document.getElementById("constituencySelect");
-    select.innerHTML = `<option disabled selected>Choose a constituency</option>`;
-    select.style.display = "inline-block";
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          const data = JSON.parse(e.target.result);
+          fullData = data;
+          signaturesByConstituency = data.signaturesByConstituency || {};
+          rawPetitionsData = data.rawPetitionsData || {};
 
-    constituencies.forEach(name => {
-      const option = document.createElement("option");
-      option.value = name;
-      option.textContent = name;
-      select.appendChild(option);
+          if (Array.isArray(rawPetitionsData)) {
+            rawPetitionsData = Object.fromEntries(rawPetitionsData.map(p => [p.id, p]));
+          }
+
+          populateConstituencySelector(Object.keys(signaturesByConstituency));
+          document.getElementById("toggleDetailsBtn").style.display = "inline-block";
+          document.getElementById("exportCsvBtn").style.display = "inline-block";
+        } catch (err) {
+          alert("Error parsing JSON file.");
+          console.error(err);
+        }
+      };
+      reader.readAsText(file);
     });
 
-    select.addEventListener("change", function () {
-      const selected = this.value;
-      const constituencyData = fullData[selected];
-      populateTable(constituencyData);
+    function populateConstituencySelector(constituencies) {
+      const select = document.getElementById("constituencySelect");
+      select.innerHTML = `<option disabled selected>Choose a constituency</option>`;
+      select.style.display = "inline-block";
+
+      select.addEventListener("change", function () {
+        const selected = this.value;
+        const constituencyData = signaturesByConstituency[selected];
+        document.getElementById("dataTable").classList.remove("show-details");
+        document.getElementById("toggleDetailsBtn").textContent = "📦➡️";
+        populateTable(constituencyData);
+      });
+
+      constituencies.forEach(name => {
+        const option = document.createElement("option");
+        option.value = name;
+        option.textContent = name;
+        select.appendChild(option);
+      });
+    }
+
+    document.getElementById("toggleDetailsBtn").addEventListener("click", function () {
+      const table = document.getElementById("dataTable");
+      const showing = table.classList.toggle("show-details");
+      this.textContent = showing ? "📦⬅️" : "📦➡️";
     });
-  }
 
- function populateTable(data) {
-  const tbody = document.querySelector("#dataTable tbody");
-  tbody.innerHTML = "";
+    function populateTable(data) {
+      const tbody = document.querySelector("#dataTable tbody");
+      tbody.innerHTML = "";
+      currentDisplayed = [];
 
-  if (!data || typeof data !== 'object') return;
+      if (!data || typeof data !== 'object') return;
 
-  const sortedEntries = Object.entries(data)
-    .sort((a, b) => b[1].count - a[1].count); // sort by count
+      const sortedEntries = Object.entries(data)
+        .sort((a, b) => b[1].count - a[1].count);
 
-  sortedEntries.forEach(([petition, details]) => {
-    const row = document.createElement("tr");
+      sortedEntries.forEach(([petition, details]) => {
+        const row = document.createElement("tr");
 
-    const petitionCell = document.createElement("td");
-    const link = document.createElement("a");
-    link.href = `https://petition.parliament.uk/petitions/${details.id}`;
-    link.textContent = petition;
-    link.target = "_blank";
-    link.rel = "noopener noreferrer";
+        const petitionCell = document.createElement("td");
+        const link = document.createElement("a");
+        link.href = `https://petition.parliament.uk/petitions/${details.id}`;
+        link.textContent = petition;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        petitionCell.appendChild(link);
 
-    petitionCell.appendChild(link);
+        const countCell = document.createElement("td");
+        countCell.textContent = details.count.toLocaleString("en-UK");
 
-    const countCell = document.createElement("td");
-    countCell.textContent = details.count;
+        const ukTotal = getUKTotal(details.id);
+        const ukTotalCell = document.createElement("td");
+        ukTotalCell.className = "details-cell";
+        ukTotalCell.textContent = ukTotal ? ukTotal.toLocaleString("en-UK") : "N/A";
 
-    row.appendChild(petitionCell);
-    row.appendChild(countCell);
-    tbody.appendChild(row);
-  });
-}
+        const sigPercentCell = document.createElement("td");
+        sigPercentCell.className = "details-cell";
+        sigPercentCell.textContent = (ukTotal && ukTotal > 0)
+          ? ((details.count / ukTotal) * 100).toFixed(2) + "%"
+          : "N/A";
 
-</script>
+        const emptyCell = document.createElement("td"); // For button alignment
+
+        row.appendChild(petitionCell);
+        row.appendChild(countCell);
+        row.appendChild(ukTotalCell);
+        row.appendChild(sigPercentCell);
+        row.appendChild(emptyCell);
+
+        tbody.appendChild(row);
+
+        currentDisplayed.push({
+          petition,
+          count: details.count,
+          ukTotal,
+          percent: (ukTotal && ukTotal > 0)
+            ? ((details.count / ukTotal) * 100).toFixed(2)
+            : null
+        });
+      });
+    }
+
+    function getUKTotal(id) {
+      const details = getPetitionDetails(id);
+      return details?.attributes?.signature_count;
+    }
+
+    function getPetitionDetails(id) {
+      return rawPetitionsData[id];
+    }
+
+    document.getElementById("exportCsvBtn").addEventListener("click", function () {
+      if (currentDisplayed.length === 0) return;
+
+      let csv = "Petition,Count,UK Total,Signature %\n";
+      currentDisplayed.forEach(row => {
+        csv += `"${row.petition.replace(/"/g, '""')}",${row.count},${row.ukTotal ?? "N/A"},${row.percent ?? "N/A"}\n`;
+      });
+
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", "petition_data.csv");
+      link.style.display = "none";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+  </script>
 
 </body>
 </html>
