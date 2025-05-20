@@ -15,28 +15,97 @@ h1 {
   margin-bottom: 1rem;
 }
 
-.control {
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  font-size: 1rem;
-}
-
+/* Modernized control styling */
 .controls-container {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
   flex-wrap: wrap;
+  gap: 0.75rem; /* Increased gap for better spacing */
+  margin-bottom: 1.5rem; /* More space below controls */
+  padding: 1rem;
+  background-color: #ffffff;
+  border-radius: 10px; /* Slightly more rounded corners */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* More prominent shadow */
+  align-items: center;
+  justify-content: center; /* Center controls horizontally */
 }
 
+.control {
+  padding: 0.75rem 1rem; /* Increased padding for inputs/selects */
+  font-size: 0.95rem; /* Slightly larger font */
+  border: 1px solid #d1d5db; /* Lighter, more modern border */
+  border-radius: 8px; /* Consistent border-radius */
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05); /* Subtle inner shadow */
+  transition: all 0.2s ease-in-out; /* Smooth transitions */
+  flex-grow: 1; /* Allow controls to grow */
+  max-width: 250px; /* Limit max width for individual controls */
+}
+
+.control:focus {
+  outline: none;
+  border-color: #6366f1; /* Tailwind indigo-500 for focus */
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25); /* Focus ring */
+}
+
+/* Specific styling for labels */
+.control-label {
+  font-size: 0.95rem;
+  color: #374151; /* Darker text for labels */
+  font-weight: 500;
+  white-space: nowrap; /* Prevent wrapping */
+}
+
+/* Styling for buttons */
+.export-btn,
+.toggle-details-btn,
+.show-info-btn {
+  font-size: 0.9rem; /* Slightly smaller font for less chunkiness */
+  padding: 0.5rem 1rem; /* Reduced padding for less chunkiness */
+  border-radius: 8px; /* Consistent rounded corners */
+  cursor: pointer;
+  font-weight: 600; /* Bolder text */
+  transition: all 0.2s ease-in-out;
+  box-shadow: none; /* Removed box-shadow */
+}
+
+.export-btn,
+.toggle-details-btn {
+  background-color: transparent; /* No background color */
+  color: #6366f1; /* Primary color for text */
+  border: 1px solid #6366f1; /* Border in primary color */
+}
+
+.export-btn:hover,
+.toggle-details-btn:hover {
+  background-color: #e0e7ff; /* Light background on hover */
+  border-color: #4f46e5; /* Darker indigo on hover */
+  color: #4f46e5;
+  box-shadow: none; /* Ensure no shadow on hover */
+}
+
+/* Adjust margin for toggle button if it's next to other controls */
+.toggle-details-btn {
+  margin-left: 0; /* Resetting previous margin */
+}
+
+/* Specific styling for file input to prevent excessive height */
+input[type="file"].control {
+  padding-top: 0.4rem; /* Reduced padding */
+  padding-bottom: 0.4rem; /* Reduced padding */
+  height: auto; /* Allow height to adjust naturally */
+  display: flex; /* Use flexbox to center content vertically */
+  align-items: center; /* Vertically center content */
+}
+
+
 table {
-  width: 100%;
-  max-width: 1000px;
+  width: 100%; /* Make table fill available width */
+  max-width: 100%; /* Constrain by parent's max-width (body's 1200px) */
   border-collapse: collapse; /* This ensures default cell borders are used */
   background-color: white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   overflow: hidden;
+  table-layout: fixed; /* Added for better column width control */
 }
 
 /* Column group background colors */
@@ -44,50 +113,36 @@ table {
   background-color: #ffffff;
 }
 
-.salience-group col {
-  background-color: #f0fff3;
+/* Define widths for all columns when all are visible */
+.overview-group col:first-child { width: 20%; } /* Petition Name (0.8 of 25%) */
+.overview-group col:nth-child(2) { width: 12%; } /* Count (increased to compensate) */
+
+.salience-group col:first-child { width: 10%; } /* Actual:Expected Salience */
+.salience-group col:nth-child(2) { width: 5%; } /* Salience Arrow */
+
+.uk-wide-info-group col:first-child { width: 10%; } /* UK Total */
+.uk-wide-info-group col:nth-child(2) { width: 10%; } /* State */
+
+.response-group col:first-child { width: 10%; } /* Written response? */
+.response-group col:nth-child(2) { width: 10%; } /* Debated? */
+
+.details-group col:first-child { width: 8%; } /* Created Date (increased to compensate) */
+.details-group col:nth-child(2) { width: 5%; } /* Details Button */
+
+
+/* When .show-details is NOT active, adjust overview columns to fill space */
+table:not(.show-details) .overview-group col:first-child,
+table:not(.show-details) .overview-group col:nth-child(2) {
+  width: 50%; /* Each takes 50% of the table width when other columns are hidden */
 }
 
-.uk-wide-info-group col { /* New group for UK Total and State */
-  background-color: #f9fafe;
-}
-
-.details-group col { /* Now only for Created Date and Details Button */
-  background-color: #f9fafe; /* Same background for visual consistency */
-}
-
-/* Removed all custom vertical border rules */
-/*
-table thead tr:first-child th.salience-header {
-  border-left: 2px solid #ccc;
-}
-
-table thead tr:first-child th.uk-wide-info-header {
-  border-left: 2px solid #ccc;
-}
-
-table thead tr:first-child th.details-header {
-  border-left: 2px solid #ccc;
-}
-
-.salience-group {
-  border-left: 2px solid #ccc;
-}
-
-.uk-wide-info-group {
-  border-left: 2px solid #ccc;
-}
-
-.details-group {
-  border-left: 2px solid #ccc;
-}
-*/
 
 th,
 td {
   padding: 0.75rem 1rem;
   text-align: left;
   border: 1px solid #e0e0e0; /* Softer border color for all cell borders */
+  word-wrap: break-word; /* Ensure long text wraps */
 }
 
 th {
@@ -129,13 +184,15 @@ th[data-sort][data-sort-direction="desc"]::after {
 
 .colgroup-header.details-col,
 .colgroup-header.salience-col,
-.colgroup-header.uk-wide-info-col { /* Add new class for UK-wide Info header */
+.colgroup-header.uk-wide-info-col, /* Add new class for UK-wide Info header */
+.colgroup-header.response-col { /* NEW class for Response header */
   display: none; /* Hidden by default */
 }
 
 .show-details .colgroup-header.details-col,
 .show-details .colgroup-header.salience-col,
-.show-details .colgroup-header.uk-wide-info-col { /* Show when details are active */
+.show-details .colgroup-header.uk-wide-info-col, /* Show when details are active */
+.show-details .colgroup-header.response-col { /* Show when details are active */
   display: table-cell; /* Visible when details are shown */
 }
 
@@ -149,7 +206,9 @@ tr:nth-child(even) {
 .salience-col,
 .salience-cell,
 .uk-wide-info-col, /* New class for UK-wide Info columns */
-.uk-wide-info-cell { /* New class for UK-wide Info cells */
+.uk-wide-info-cell, /* New class for UK-wide Info cells */
+.response-col, /* NEW class for Response columns */
+.response-cell { /* NEW class for Response cells */
   display: none;
 }
 
@@ -158,7 +217,9 @@ tr:nth-child(even) {
 .show-details .salience-col,
 .show-details .salience-cell,
 .show-details .uk-wide-info-col, /* Show when details are active */
-.show-details .uk-wide-info-cell { /* Show when details are active */
+.show-details .uk-wide-info-cell, /* Show when details are active */
+.show-details .response-col, /* Show when details are active */
+.show-details .response-cell { /* Show when details are active */
   display: table-cell; /* Visible when details are shown */
 }
 
@@ -168,14 +229,15 @@ tr:nth-child(even) {
 
 /* Styles for the new "Show Info" button */
 .show-info-btn {
-  background-color: #007bff; /* Primary button color */
-  color: white;
-  border: 1px solid #007bff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle button shadow */
+  background-color: transparent; /* No background color */
+  color: #007bff; /* Primary button color for text */
+  border: 1px solid #007bff; /* Border in primary color */
+  box-shadow: none; /* Removed box-shadow */
 }
 
 .show-info-btn:hover {
-  background-color: #0056b3;
+  background-color: #e6f0ff; /* Light background on hover */
+  color: #0056b3;
 }
 
 .salience-arrow {
@@ -200,33 +262,89 @@ tr:nth-child(even) {
 }
 
 /* Styles for the expanded petition details row */
-.petition-details-row {
-  background-color: #f0f8ff; /* Light blue background for expanded details */
-  border-top: 2px solid #c0c0c0; /* Softened border color */
-  border-bottom: 2px solid #c0c0c0; /* Softened border color */
+.petition-details-row td {
+  padding: 0 !important;
+  width: auto !important; /* Let the colspan determine the width */
+  display: table-cell !important; /* Ensure it behaves like a table cell */
 }
 
 .petition-details-content {
-  padding: 1rem;
-  font-size: 0.9rem;
-  line-height: 1.5;
+  padding: 1.5rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.petition-details-content strong {
+.detail-section {
+  background-color: #ffffff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* Space between detail items within a section */
+}
+
+.detail-section strong {
+  font-size: 1.05rem; /* Slightly larger heading for sections */
+  color: #333;
+  margin-bottom: 0.5rem;
   display: block;
-  margin-top: 0.8rem;
-  margin-bottom: 0.3rem;
-  font-size: 1rem;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column; /* Stack label and value */
+  margin-bottom: 0.5rem; /* Space between detail items */
+}
+
+.detail-item strong {
+  font-size: 0.9rem; /* Smaller font for individual labels */
+  color: #555;
+  margin-bottom: 0.2rem; /* Closer to the value */
+  display: block; /* Ensure it takes its own line */
+}
+
+.detail-item p {
+  margin: 0; /* Remove default paragraph margin */
+  padding: 0;
   color: #333;
 }
 
-.petition-details-content p {
-  margin-bottom: 0.5rem;
-}
-
-.petition-details-content a {
+.detail-item a {
   color: #007bff;
   text-decoration: underline;
+}
+
+.detail-section ul {
+  list-style: disc inside; /* Bullet points for lists */
+  margin: 0.5rem 0 0 1rem;
+  padding: 0;
+}
+
+.detail-section li {
+  margin-bottom: 0.2rem;
+  color: #333;
+}
+
+.missing-info-section {
+  grid-column: 1 / -1; /* Span full width for missing info in grid layout */
+  background-color: #fff3cd; /* Light yellow background */
+  border: 1px solid #ffeeba;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1.5rem;
+  color: #664d03; /* Darker text for contrast */
+  font-size: 0.9rem;
+}
+
+.missing-info-section strong {
+  font-weight: 700;
+  margin-right: 0.5rem;
 }
 
 
@@ -310,5 +428,6 @@ footer {
 
   .petition-details-content {
     padding-left: 1rem; /* Adjust padding for mobile */
+    grid-template-columns: 1fr; /* Single column on small screens */
   }
 }

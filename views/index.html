@@ -25,6 +25,16 @@
       <option value="up">More salient ↑</option>
       <option value="down">Less salient ↓</option>
     </select>
+    <select id="filterWrittenResponse" class="control">
+      <option value="all">Written response?: All</option>
+      <option value="yes">Written response?: Yes ✓</option>
+      <option value="no">Written response?: No ✗</option>
+    </select>
+    <select id="filterDebated" class="control">
+      <option value="all">Debated?: All</option>
+      <option value="yes">Debated?: Yes ✓</option>
+      <option value="no">Debated?: No ✗</option>
+    </select>
     <button id="toggleDetailsBtn" class="toggle-details-btn export-btn control">📊 Show Details</button>
     <button class="export-btn control" id="exportCsvBtn">⬇️ Export to CSV</button>
   </div>
@@ -34,20 +44,26 @@
   <colgroup id="salience-group" class="salience-group">
     <col class="salience-col" /><col class="salience-col" /></colgroup>
   <colgroup id="uk-wide-info-group" class="uk-wide-info-group"> <col class="uk-wide-info-col" /><col class="uk-wide-info-col" /></colgroup>
+  <colgroup id="response-group" class="response-group"> <col class="response-col" /><col class="response-col" /></colgroup>
   <colgroup id="details-group" class="details-group"> <col class="details-col" /><col class="details-col" /></colgroup>
   <thead>
     <tr>
       <th colspan="2" class="colgroup-header">Overview</th>
       <th colspan="2" class="colgroup-header salience-col salience-header">Local Salience</th>
-      <th colspan="2" class="colgroup-header uk-wide-info-col uk-wide-info-header">UK-wide Info</th> <th colspan="2" class="colgroup-header details-col details-header">Details</th> </tr>
+      <th colspan="2" class="colgroup-header uk-wide-info-col uk-wide-info-header">UK-wide Info</th>
+      <th colspan="2" class="colgroup-header response-col response-header">Response</th> <th colspan="2" class="colgroup-header details-col details-header">Details</th>
+    </tr>
     <tr>
       <th data-sort="text">Petition</th>
-      <th data-sort="number">Count</th>
-      <th class="salience-col" data-sort="number">Actual:Expected Salience</th>
-      <th class="salience-col"></th> <th class="uk-wide-info-col" data-sort="number">UK Total</th>
+      <th id="countHeader" data-sort="number">Count</th> <th class="salience-col" data-sort="number">Actual:Expected Salience</th>
+      <th class="salience-col"></th>
+      <th class="uk-wide-info-col" data-sort="number">UK Total</th>
       <th class="uk-wide-info-col" data-sort="text">State</th>
+      <th class="response-col">Written response?</th>
+      <th class="response-col">Debated?</th>
       <th class="details-col" data-sort="date">Created</th>
-      <th class="details-col"></th> </tr>
+      <th class="details-col"></th>
+    </tr>
   </thead>
   <tbody>
   </tbody>
@@ -65,7 +81,7 @@
     let currentSortColumn = 1;
     let currentSortDirection = "desc";
     // Updated headerCellIndexMap based on new column positions
-    // Table columns: Petition (0), Count (1), Salience (2), Arrow (3), UK Total (4), State (5), Created (6), Details Button (7)
+    // Table columns: Petition (0), Count (1), Salience (2), Arrow (3), UK Total (4), State (5), Written Response (6), Debated (7), Created (8), Details Button (9)
     // data-sort indices: Petition (0), Count (1), Salience (2), UK Total (3), State (4), Created (5)
     // Mapping:
     // Petition: 0 -> cell 0
@@ -73,8 +89,8 @@
     // Salience: 2 -> cell 2
     // UK Total: 3 -> cell 4
     // State: 4 -> cell 5
-    // Created: 5 -> cell 6
-    const headerCellIndexMap = [0, 1, 2, 4, 5, 6];
+    // Created: 5 -> cell 8
+    const headerCellIndexMap = [0, 1, 2, 4, 5, 8];
 
     document.getElementById('fileInput').addEventListener('change', function(event) {
       const file = event.target.files[0];
@@ -112,6 +128,9 @@
         const constituencyData = signaturesByConstituency[selected];
         const dataTable = document.getElementById("dataTable");
         const toggleDetailsBtn = document.getElementById("toggleDetailsBtn");
+        const countHeader = document.getElementById("countHeader"); // Get the count header
+
+        countHeader.textContent = `${selected} signatures`; // Update the header text
 
         dataTable.classList.remove("show-details");
         toggleDetailsBtn.textContent = "📊 Show Details";
@@ -228,6 +247,9 @@
       const minSignatures = parseInt(document.getElementById('filterSignatures').value) || 0;
       const createdAfterDate = document.getElementById('filterCreatedDate').value; //YYYY-MM-DD
       const salienceArrowFilter = document.getElementById('filterSalienceArrow').value; // 'all', 'up', 'down'
+      const writtenResponseFilter = document.getElementById('filterWrittenResponse').value; // 'all', 'yes', 'no'
+      const debatedFilter = document.getElementById('filterDebated').value; // 'all', 'yes', 'no'
+
       const tbody = document.querySelector("#dataTable tbody");
       const rows = Array.from(tbody.querySelectorAll("tr:not(.petition-details-row)"));
 
@@ -248,11 +270,11 @@
           display = false;
         }
 
-        // Filter by created date (now at index 6)
-        const createdDateCell = row.cells[6]; // Get the created date cell
+        // Filter by created date (now at index 8)
+        const createdDateCell = row.cells[8]; // Get the created date cell
         const rawCreatedDate = createdDateCell ? createdDateCell.getAttribute("data-value") : null; // Get raw ISO date
         if (createdAfterDate && rawCreatedDate) {
-          if (rawCreatedDate < createdAfterDate) { // Direct string comparison works for YYYY-MM-DD
+          if (rawCreatedDate < createdAfterDate) { // Direct string comparison works for ISO-MM-DD
             display = false;
           }
         } else if (createdAfterDate) {
@@ -265,6 +287,24 @@
         if (salienceArrowFilter === 'up' && salienceValue <= 1.0) {
           display = false;
         } else if (salienceArrowFilter === 'down' && salienceValue >= 1.0) {
+          display = false;
+        }
+
+        // Filter by written response (cell index 6)
+        const writtenResponseCell = row.cells[6];
+        const hasWrittenResponse = writtenResponseCell?.textContent === '✓';
+        if (writtenResponseFilter === 'yes' && !hasWrittenResponse) {
+          display = false;
+        } else if (writtenResponseFilter === 'no' && hasWrittenResponse) {
+          display = false;
+        }
+
+        // Filter by debated (cell index 7)
+        const debatedCell = row.cells[7];
+        const hasDebate = debatedCell?.textContent === '✓';
+        if (debatedFilter === 'yes' && !hasDebate) {
+          display = false;
+        } else if (debatedFilter === 'no' && hasDebate) {
           display = false;
         }
 
@@ -353,27 +393,43 @@
         salienceIndicatorCell.appendChild(salienceIndicator);
         row.appendChild(salienceIndicatorCell);
 
-        // UK Total cell (now in uk-wide-info group)
+        // UK Total cell (in uk-wide-info group)
         const ukTotalCell = document.createElement("td");
         ukTotalCell.className = "uk-wide-info-cell"; // Add uk-wide-info-cell class
         ukTotalCell.textContent = ukTotal ? ukTotal.toLocaleString("en-UK") : "N/A";
         ukTotalCell.setAttribute("data-value", ukTotal || 0);
         row.appendChild(ukTotalCell);
 
-        // State cell (now in uk-wide-info group)
+        // State cell (in uk-wide-info group)
         const stateCell = document.createElement("td");
         stateCell.className = "uk-wide-info-cell"; // Add uk-wide-info-cell class
         stateCell.textContent = petitionDetails?.attributes?.state || "N/A";
         row.appendChild(stateCell);
 
-        // New 'Created' date cell (now in details group)
+        // Written response? cell (NEW)
+        const writtenResponseCell = document.createElement("td");
+        writtenResponseCell.className = "response-cell"; // Add response-cell class
+        // Corrected access: petitionDetails.attributes.government_response
+        const hasWrittenResponse = petitionDetails?.attributes?.government_response ? '✓' : '✗';
+        writtenResponseCell.textContent = hasWrittenResponse;
+        row.appendChild(writtenResponseCell);
+
+        // Debated? cell (NEW)
+        const debatedCell = document.createElement("td");
+        debatedCell.className = "response-cell"; // Add response-cell class
+        // Corrected access: petitionDetails.attributes.debate
+        const hasDebate = petitionDetails?.attributes?.debate ? '✓' : '✗';
+        debatedCell.textContent = hasDebate;
+        row.appendChild(debatedCell);
+
+        // New 'Created' date cell (in details group)
         const createdCell = document.createElement("td");
         createdCell.className = "details-cell"; // Add details-cell class
         createdCell.textContent = formattedCreatedDate;
         createdCell.setAttribute("data-value", createdDateISO || ''); // Store ISO for sorting
         row.appendChild(createdCell);
 
-        // Details button cell (now in details group)
+        // Details button cell (in details group)
         const detailsButtonCell = document.createElement("td");
         detailsButtonCell.className = "details-cell"; // Add details-cell class
         const detailsButton = document.createElement("button");
@@ -391,37 +447,103 @@
         detailsRow.style.display = 'none'; // Initially hidden
 
         const detailsContentCell = document.createElement("td");
-        // Total columns in the table (Petition, Count, Salience, Arrow, UK Total, State, Created, Details Btn) = 8
-        detailsContentCell.colSpan = 8;
+        // Total columns in the table (Petition, Count, Salience, Arrow, UK Total, State, Written Response, Debated, Created, Details Btn) = 10
+        detailsContentCell.colSpan = 10;
         detailsContentCell.classList.add("petition-details-content");
 
         let contentHtml = '';
-        if (petitionDetails) {
-            contentHtml += `<strong>Background:</strong> <p>${petitionDetails.attributes.background || 'N/A'}</p>`;
-            if (petitionDetails.attributes.additional_details) {
-                contentHtml += `<strong>Additional Details:</strong> <p>${petitionDetails.attributes.additional_details}</p>`;
+        const missingFields = [];
+
+        const addDetail = (label, value, formatFn = null) => {
+            if (value) {
+                contentHtml += `<div class="detail-item"><strong>${label}:</strong> `;
+                if (formatFn) {
+                    contentHtml += `<p>${formatFn(value)}</p></div>`;
+                } else {
+                    contentHtml += `<p>${value}</p></div>`;
+                }
+            } else {
+                missingFields.push(label);
             }
-            if (petitionDetails.government_response) {
-                contentHtml += `<strong>Government Response:</strong> <p><em>Responded on: ${formatDateUK(petitionDetails.government_response.responded_on)}</em></p><p>${petitionDetails.government_response.summary || 'N/A'}</p>`;
-                if (petitionDetails.government_response.details) {
-                    contentHtml += `<p>${petitionDetails.government_response.details}</p>`;
-                }
+        };
+
+        const addLinkDetail = (label, url, text) => {
+            if (url && url !== "https://www.youtube.com/watch?v=a1BAM81Twgk") {
+                contentHtml += `<div class="detail-item"><strong>${label}:</strong> <p><a href="${url}" target="_blank" rel="noopener noreferrer">${text}</a></p></div>`;
+            } else {
+                missingFields.push(label);
             }
-            if (petitionDetails.debate) {
-                contentHtml += `<strong>Debate Info:</strong> <p><em>Debated on: ${formatDateUK(petitionDetails.debate.debated_on)}</em></p>`;
-                if (petitionDetails.debate.transcript_url) {
-                    contentHtml += `<p><a href="${petitionDetails.debate.transcript_url}" target="_blank" rel="noopener noreferrer">Transcript</a></p>`;
-                }
-                if (petitionDetails.debate.video_url && petitionDetails.debate.video_url !== "https://www.youtube.com/watch?v=a1BAM81Twgk") {
-                    contentHtml += `<p><a href="${petitionDetails.debate.video_url}" target="_blank" rel="noopener noreferrer">Video</a></p>`;
-                }
-                if (petitionDetails.debate.debate_pack_url) {
-                    contentHtml += `<p><a href="${petitionDetails.debate.debate_pack_url}" target="_blank" rel="noopener noreferrer">Debate Pack</a></p>`;
-                }
-            }
+        };
+
+        contentHtml += `<div class="detail-section">`;
+        addDetail('Action', petitionDetails?.attributes?.action);
+        addDetail('Background', petitionDetails?.attributes?.background);
+        addDetail('Additional Details', petitionDetails?.attributes?.additional_details);
+        addDetail('Creator', petitionDetails?.attributes?.creator_name);
+        addDetail('Petition Type', petitionDetails?.attributes?.petition_type);
+        addDetail('Opened', petitionDetails?.attributes?.opening_at, formatDateUK);
+        addDetail('Closed', petitionDetails?.attributes?.closing_at, formatDateUK);
+        contentHtml += `</div>`; // End detail-section
+
+        if (petitionDetails?.attributes?.government_response) {
+            const govResponse = petitionDetails.attributes.government_response;
+            contentHtml += `<div class="detail-section"><strong>Government Response:</strong>`;
+            addDetail('Responded on', govResponse.responded_on, formatDateUK);
+            addDetail('Summary', govResponse.summary);
+            addDetail('Details', govResponse.details);
+            contentHtml += `</div>`; // End detail-section
         } else {
-            contentHtml = '<p>No additional details available for this petition.</p>';
+            missingFields.push('Government Response');
         }
+
+        if (petitionDetails?.attributes?.debate) {
+            const debateInfo = petitionDetails.attributes.debate;
+            contentHtml += `<div class="detail-section"><strong>Debate Info:</strong>`;
+            addDetail('Debated on', debateInfo.debated_on, formatDateUK);
+            addLinkDetail('Transcript', debateInfo.transcript_url, 'Transcript');
+            addLinkDetail('Video', debateInfo.video_url, 'Video');
+            addLinkDetail('Debate Pack', debateInfo.debate_pack_url, 'Debate Pack');
+            contentHtml += `</div>`; // End detail-section
+        } else {
+            missingFields.push('Debate Info');
+        }
+
+        if (petitionDetails?.attributes?.rejection) {
+            const rejection = petitionDetails.attributes.rejection;
+            contentHtml += `<div class="detail-section"><strong>Rejection:</strong>`;
+            addDetail('Rejection Code', rejection.code);
+            addDetail('Rejection Details', rejection.details);
+            contentHtml += `</div>`; // End detail-section
+        } else {
+            missingFields.push('Rejection Info');
+        }
+
+        if (petitionDetails?.attributes?.departments && petitionDetails.attributes.departments.length > 0) {
+            contentHtml += `<div class="detail-section"><strong>Departments:</strong> <ul>`;
+            petitionDetails.attributes.departments.forEach(dept => {
+                contentHtml += `<li>${dept.name}</li>`;
+            });
+            contentHtml += `</ul></div>`; // End detail-section
+        } else {
+            missingFields.push('Departments');
+        }
+
+        if (petitionDetails?.attributes?.topics && petitionDetails.attributes.topics.length > 0) {
+            contentHtml += `<div class="detail-section"><strong>Topics:</strong> <ul>`;
+            petitionDetails.attributes.topics.forEach(topic => {
+                contentHtml += `<li>${topic}</li>`;
+            });
+            contentHtml += `</ul></div>`; // End detail-section
+        } else {
+            missingFields.push('Topics');
+        }
+
+
+        // List of empty values
+        if (missingFields.length > 0) {
+            contentHtml += `<div class="missing-info-section"><strong>Missing Information:</strong> <span>${missingFields.join(', ')}</span></div>`;
+        }
+
 
         detailsContentCell.innerHTML = contentHtml;
         detailsRow.appendChild(detailsContentCell);
@@ -440,7 +562,9 @@
           created: createdDateISO, // Store ISO for export
           salience: formattedSalience,
           ukTotal,
-          state: petitionDetails?.attributes?.state || null
+          state: petitionDetails?.attributes?.state || null,
+          hasWrittenResponse: petitionDetails?.attributes?.government_response ? true : false,
+          hasDebate: petitionDetails?.attributes?.debate ? true : false
         });
       });
 
@@ -460,9 +584,9 @@
     document.getElementById("exportCsvBtn").addEventListener("click", function() {
       if (currentDisplayed.length === 0) return;
 
-      const csvHeader = "Petition,Count,Salience,UK Total,State,Created\n"; // Updated CSV header
+      const csvHeader = "Petition,Count,Salience,UK Total,State,Written Response?,Debated?,Created\n"; // Updated CSV header
       const csvRows = currentDisplayed.map(item =>
-        `"${item.petition.replace(/"/g, '""')}",${item.count},${item.salience},${item.ukTotal ?? "N/A"},${item.state ?? "N/A"},"${formatDateUK(item.created)}"`
+        `"${item.petition.replace(/"/g, '""')}",${item.count},${item.salience},${item.ukTotal ?? "N/A"},${item.state ?? "N/A"},${item.hasWrittenResponse ? 'Yes' : 'No'},${item.hasDebate ? 'Yes' : 'No'},"${formatDateUK(item.created)}"`
       ).join("\n");
 
       const csvString = csvHeader + csvRows;
@@ -484,11 +608,15 @@
       const filterSignaturesInput = document.getElementById('filterSignatures');
       const filterCreatedDateInput = document.getElementById('filterCreatedDate');
       const filterSalienceArrowInput = document.getElementById('filterSalienceArrow');
+      const filterWrittenResponseInput = document.getElementById('filterWrittenResponse');
+      const filterDebatedInput = document.getElementById('filterDebated');
 
       filterNameInput.addEventListener('input', applyFilters);
       filterSignaturesInput.addEventListener('input', applyFilters);
       filterCreatedDateInput.addEventListener('input', applyFilters);
       filterSalienceArrowInput.addEventListener('change', applyFilters); // Use 'change' for select elements
+      filterWrittenResponseInput.addEventListener('change', applyFilters);
+      filterDebatedInput.addEventListener('change', applyFilters);
     });
   </script>
 </body>
