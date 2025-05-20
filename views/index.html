@@ -4,290 +4,54 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Petitioners by Locality</title>
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      margin: 0 auto;
-      padding: 2rem;
-      background-color: #f9f9f9;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-      max-width: 1200px;
-      box-sizing: border-box;
-    }
-
-    h1 {
-      margin-bottom: 1rem;
-    }
-
-    input[type="file"],
-    select,
-    button.export-btn {
-      margin-bottom: 1rem;
-      padding: 0.5rem;
-      font-size: 1rem;
-    }
-
-    .controls-container {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-      flex-wrap: wrap;
-    }
-
-    table {
-      width: 100%;
-      max-width: 1000px;
-      border-collapse: collapse;
-      background-color: white;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    table colgroup:first-of-type col {
-      background-color: #ffffff;
-    }
-
-    /* MODIFIED SECTION STARTS */
-    table colgroup:nth-of-type(2) col {
-      background-color: #f0fff3; /* Background for all columns in the 2nd group */
-      /* border-left: 2px solid #ccc; */ /* Removed from here */
-    }
-
-    /* Rule for the dividing line between 1st and 2nd colgroup */
-    table colgroup:nth-of-type(2) col:first-child {
-      border-left: 2px solid #ccc; /* Applies only to the first column of the 2nd group */
-    }
-    /* MODIFIED SECTION ENDS */
-
-    table colgroup:nth-of-type(3) col {
-      background-color: #f9fafe;
-      border-left: 2px solid #ccc; /* This rule remains, affecting all cols in 3rd group */
-    }
-
-    /* Only show vertical lines when details are revealed */
-    .show-details td:nth-child(4) {
-      border-right: 2px solid #999; /* Less intense vertical line */
-    }
-
-    th, td {
-      padding: 0.75rem 1rem;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
-
-    th {
-      background-color: #f1f1f1;
-      font-weight: bold;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    th:hover {
-      background-color: #e5e5e5;
-    }
-
-    th::after {
-      content: '↕️';
-      opacity: 0.2;
-      margin-left: 5px;
-    }
-
-    th[data-sort-direction="asc"]::after {
-      content: '↑';
-      opacity: 1;
-    }
-
-    th[data-sort-direction="desc"]::after {
-      content: '↓';
-      opacity: 1;
-    }
-
-    /* Only show vertical line in header when details are revealed */
-    .show-details th:nth-child(4) {
-      border-right: 2px solid #999;
-    }
-    
-    /* Style for column group headers */
-    .colgroup-header {
-      text-align: center;
-      background-color: #e5e5e5;
-      font-weight: bold;
-      padding: 0.5rem;
-    }
-    
-    .colgroup-header.details-col {
-      display: none;
-    }
-    
-    .colgroup-header.salience-col {
-      display: none;
-    }
-    
-    .show-details .colgroup-header.details-col {
-      display: table-cell;
-    }
-
-    .show-details .colgroup-header.salience-col {
-      display: table-cell;
-    }
-
-    tr:nth-child(even) {
-      background-color: #f6f6f6;
-    }
-
-    .details-col,
-    .details-cell,
-    .salience-col,
-    .salience-cell {
-      display: none;
-    }
-
-    .show-details .details-col,
-    .show-details .details-cell,
-    .show-details .salience-col,
-    .show-details .salience-cell {
-      display: table-cell;
-    }
-
-    .toggle-btn-cell {
-      text-align: right;
-    }
-
-    .toggle-details-btn {
-      font-size: 0.9rem;
-      padding: 0.4rem 0.6rem;
-      cursor: pointer;
-      background-color: #eee;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      margin-left: 0.5rem;
-    }
-    
-    .salience-arrow {
-      font-size: 20px;
-      text-align: center;
-      padding: 5px;
-      border-radius: 4px;
-      display: inline-block;
-      width: 30px;
-      height: 30px;
-      line-height: 30px;
-    }
-    
-    .salience-arrow.up {
-      background-color: #e6ffec;
-      color: #2da44e;
-    }
-    
-    .salience-arrow.down {
-      background-color: #ffebe9;
-      color: #cf222e;
-    }
-
-    footer {
-      margin-top: auto;
-      padding: 1rem;
-      font-size: 0.85rem;
-      color: #666;
-      text-align: center;
-    }
-
-    @media (max-width: 600px) {
-      .controls-container {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      
-      table, thead, tbody, th, td, tr {
-        display: block;
-      }
-
-      th {
-        display: none;
-      }
-
-      td {
-        position: relative;
-        padding-left: 50%;
-      }
-
-      td::before {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 50%;
-        padding-left: 1rem;
-        font-weight: bold;
-        white-space: nowrap;
-      }
-
-      tr {
-        margin-bottom: 1rem;
-        border-bottom: 2px solid #ccc;
-      }
-
-      .toggle-btn-cell {
-        text-align: left;
-        padding-top: 1rem;
-      }
-      
-      /* Remove the vertical line in mobile view as it's not needed */
-      .show-details td:nth-child(2), .show-details th:nth-child(2) {
-        border-right: none;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="styles/index.css" />
 </head>
 <body>
 
   <h1>Petitioners by Locality</h1>
   <p>Select the constituencies_data.json file here.</p>
-  <input type="file" id="fileInput" accept=".json" />
-  
+  <input type="file" id="fileInput" accept=".json" class="control" />
+
   <div class="controls-container" id="controlsContainer" style="display:none;">
-    <select id="constituencySelect">
+    <select id="constituencySelect" class="control">
       <option disabled selected>Choose a constituency</option>
     </select>
-    <button id="toggleDetailsBtn" class="toggle-details-btn export-btn">📊 Show Details</button>
-    <button class="export-btn" id="exportCsvBtn">⬇️ Export to CSV</button>
+    <input type="text" id="filterName" placeholder="Filter by petition name" class="control">
+    <input type="number" id="filterSignatures" placeholder="Min signatures" class="control">
+    <label for="filterCreatedDate" class="control-label">Created after:</label>
+    <input type="date" id="filterCreatedDate" class="control">
+    <select id="filterSalienceArrow" class="control">
+      <option value="all">Salience: All</option>
+      <option value="up">More salient ↑</option>
+      <option value="down">Less salient ↓</option>
+    </select>
+    <button id="toggleDetailsBtn" class="toggle-details-btn export-btn control">📊 Show Details</button>
+    <button class="export-btn control" id="exportCsvBtn">⬇️ Export to CSV</button>
   </div>
-
-  <table id="dataTable">
-    <colgroup>
-      <col />
-      <col />
-    </colgroup>
-    <colgroup class="salience-group">
-      <col class="salience-col" />
-      <col class="salience-col" />
-    </colgroup>
-    <colgroup class="detail-group">
-      <col class="details-col" />
-      <col class="details-col" />
-    </colgroup>
-    <thead>
-      <tr>
-        <td colspan="2" class="colgroup-header">Overview</td>
-        <td colspan="2" class="colgroup-header salience-col">Local Salience</td>
-        <td colspan="2" class="colgroup-header details-col">UK-wide Info</td>
-      </tr>
-      <tr>
-        <th data-sort="text">Petition</th>
-        <th data-sort="number">Count</th>
-        <th class="salience-col" data-sort="number">Actual:Expected Salience</th>
-        <th class="salience-col"></th>
-        <th class="details-col" data-sort="number">UK Total</th>
-        <th class="details-col" data-sort="text">State</th>
-      </tr>
-    </thead>
-    <tbody>
-      </tbody>
-  </table>
+<table id="dataTable">
+  <colgroup id="overview-group" class="overview-group">
+    <col /><col /></colgroup>
+  <colgroup id="salience-group" class="salience-group">
+    <col class="salience-col" /><col class="salience-col" /></colgroup>
+  <colgroup id="uk-wide-info-group" class="uk-wide-info-group"> <col class="uk-wide-info-col" /><col class="uk-wide-info-col" /></colgroup>
+  <colgroup id="details-group" class="details-group"> <col class="details-col" /><col class="details-col" /></colgroup>
+  <thead>
+    <tr>
+      <th colspan="2" class="colgroup-header">Overview</th>
+      <th colspan="2" class="colgroup-header salience-col salience-header">Local Salience</th>
+      <th colspan="2" class="colgroup-header uk-wide-info-col uk-wide-info-header">UK-wide Info</th> <th colspan="2" class="colgroup-header details-col details-header">Details</th> </tr>
+    <tr>
+      <th data-sort="text">Petition</th>
+      <th data-sort="number">Count</th>
+      <th class="salience-col" data-sort="number">Actual:Expected Salience</th>
+      <th class="salience-col"></th> <th class="uk-wide-info-col" data-sort="number">UK Total</th>
+      <th class="uk-wide-info-col" data-sort="text">State</th>
+      <th class="details-col" data-sort="date">Created</th>
+      <th class="details-col"></th> </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
 
   <footer>
     Contains public sector information licensed under the Open Government Licence v3.0.
@@ -298,19 +62,26 @@
     let signaturesByConstituency = {};
     let rawPetitionsData = {};
     let currentDisplayed = [];
-    // Default sort by "Count" (index 1 of sortable headers), descending
-    let currentSortColumn = 1; 
+    let currentSortColumn = 1;
     let currentSortDirection = "desc";
-    // Maps the index of `th[data-sort]` elements to actual cell index in a row
-    const headerCellIndexMap = [0, 1, 2, 4, 5]; 
+    // Updated headerCellIndexMap based on new column positions
+    // Table columns: Petition (0), Count (1), Salience (2), Arrow (3), UK Total (4), State (5), Created (6), Details Button (7)
+    // data-sort indices: Petition (0), Count (1), Salience (2), UK Total (3), State (4), Created (5)
+    // Mapping:
+    // Petition: 0 -> cell 0
+    // Count: 1 -> cell 1
+    // Salience: 2 -> cell 2
+    // UK Total: 3 -> cell 4
+    // State: 4 -> cell 5
+    // Created: 5 -> cell 6
+    const headerCellIndexMap = [0, 1, 2, 4, 5, 6];
 
-
-    document.getElementById('fileInput').addEventListener('change', function (event) {
+    document.getElementById('fileInput').addEventListener('change', function(event) {
       const file = event.target.files[0];
       if (!file) return;
 
       const reader = new FileReader();
-      reader.onload = function (e) {
+      reader.onload = function(e) {
         try {
           const data = JSON.parse(e.target.result);
           fullData = data;
@@ -336,43 +107,44 @@
       select.innerHTML = `<option disabled selected>Choose a constituency</option>`;
       select.style.display = "inline-block";
 
-      select.addEventListener("change", function () {
+      select.addEventListener("change", function() {
         const selected = this.value;
         const constituencyData = signaturesByConstituency[selected];
-        document.getElementById("dataTable").classList.remove("show-details");
-        document.getElementById("toggleDetailsBtn").textContent = "📊 Show Details";
-        
-        // Reset to default sort when constituency changes
-        currentSortColumn = 1; // "Count" column (index 1 in sortable headers array)
+        const dataTable = document.getElementById("dataTable");
+        const toggleDetailsBtn = document.getElementById("toggleDetailsBtn");
+
+        dataTable.classList.remove("show-details");
+        toggleDetailsBtn.textContent = "📊 Show Details";
+
+        currentSortColumn = 1; // Default sort by Count
         currentSortDirection = "desc";
 
-        populateTable(constituencyData); // Populates based on data, initial sort inside is by count
-        updateSortIndicator(); // Update UI to show "Count" sorted desc
-        // Re-sort based on current sort state, ensuring consistency if populateTable's internal sort changes
+        populateTable(constituencyData);
+        updateSortIndicator();
         const headers = document.querySelectorAll("th[data-sort]");
         if (headers[currentSortColumn]) {
-            const sortType = headers[currentSortColumn].getAttribute("data-sort");
-            sortTable(currentSortColumn, sortType, currentSortDirection);
+          const sortType = headers[currentSortColumn].getAttribute("data-sort");
+          sortTable(currentSortColumn, sortType, currentSortDirection);
         }
       });
 
-      constituencies.sort().forEach(name => { // Sort constituencies alphabetically
+      constituencies.sort().forEach(name => {
         const option = document.createElement("option");
         option.value = name;
         option.textContent = name;
         select.appendChild(option);
       });
     }
-    
+
     function updateSortIndicator() {
-        const headers = document.querySelectorAll("th[data-sort]");
-        headers.forEach(h => h.removeAttribute("data-sort-direction"));
-        if (currentSortColumn >= 0 && currentSortColumn < headers.length && headers[currentSortColumn]) {
-            headers[currentSortColumn].setAttribute("data-sort-direction", currentSortDirection);
-        }
+      const headers = document.querySelectorAll("th[data-sort]");
+      headers.forEach(h => h.removeAttribute("data-sort-direction"));
+      if (currentSortColumn >= 0 && currentSortColumn < headers.length && headers[currentSortColumn]) {
+        headers[currentSortColumn].setAttribute("data-sort-direction", currentSortDirection);
+      }
     }
 
-    document.getElementById("toggleDetailsBtn").addEventListener("click", function () {
+    document.getElementById("toggleDetailsBtn").addEventListener("click", function() {
       const table = document.getElementById("dataTable");
       const showing = table.classList.toggle("show-details");
       this.textContent = showing ? "📊 Hide Details" : "📊 Show Details";
@@ -380,71 +152,147 @@
 
     function setupSortableColumns() {
       const headers = document.querySelectorAll("th[data-sort]");
-      headers.forEach((header) => { // No need for index here
+      headers.forEach((header, index) => {
         header.addEventListener("click", function() {
           const sortType = this.getAttribute("data-sort");
-          // Find the index of the clicked header within the NodeList of sortable headers
-          const columnIndex = Array.from(headers).indexOf(this); 
-          
-          if (currentSortColumn === columnIndex) {
-            // Same column, toggle direction
+
+          if (currentSortColumn === index) {
             currentSortDirection = currentSortDirection === "desc" ? "asc" : "desc";
           } else {
-            // New column, sort descending by default
-            currentSortColumn = columnIndex;
-            currentSortDirection = "desc"; 
+            currentSortColumn = index;
+            currentSortDirection = "desc";
           }
-          
+
           updateSortIndicator();
-          sortTable(columnIndex, sortType, currentSortDirection);
+          sortTable(index, sortType, currentSortDirection);
         });
       });
     }
-    
+
     function sortTable(columnIndex, sortType, direction) {
       const tbody = document.querySelector("#dataTable tbody");
-      const rows = Array.from(tbody.querySelectorAll("tr"));
-      
+      const rows = Array.from(tbody.querySelectorAll("tr:not(.petition-details-row)")); // Exclude detail rows from sorting
+
       const actualCellIndex = headerCellIndexMap[columnIndex];
+
       if (actualCellIndex === undefined) {
         console.error("Invalid columnIndex for sorting:", columnIndex);
         return;
       }
-      
+
       rows.sort((rowA, rowB) => {
-        let valueA, valueB;
         const cellA = rowA.cells[actualCellIndex];
         const cellB = rowB.cells[actualCellIndex];
+        if (!cellA || !cellB) return 0;
 
-        if (!cellA || !cellB) return 0; // Should not happen with correct mapping
-        
-        // Prioritize data-value attribute for sorting if available (typically for numbers)
-        if (cellA.hasAttribute("data-value") && cellB.hasAttribute("data-value")) {
-          valueA = parseFloat(cellA.getAttribute("data-value"));
-          valueB = parseFloat(cellB.getAttribute("data-value"));
+        let valueA, valueB;
+
+        if (sortType === "date") {
+          valueA = new Date(cellA.getAttribute("data-value") || 0);
+          valueB = new Date(cellB.getAttribute("data-value") || 0);
         } else {
-          valueA = cellA.textContent.trim();
-          valueB = cellB.textContent.trim();
-          
-          if (sortType === "number") {
-            valueA = parseFloat(valueA.replace(/[,]+/g, "")) || 0; // Remove commas for parsing
-            valueB = parseFloat(valueB.replace(/[,]+/g, "")) || 0; // Remove commas for parsing
-          }
+          valueA = cellA.hasAttribute("data-value") ? cellA.getAttribute("data-value") : cellA.textContent.trim();
+          valueB = cellB.hasAttribute("data-value") ? cellB.getAttribute("data-value") : cellB.textContent.trim();
         }
-        
-        if (valueA === valueB) return 0;
-        
+
         let comparison = 0;
-        if (valueA < valueB) {
-            comparison = -1;
-        } else if (valueA > valueB) {
-            comparison = 1;
+        if (sortType === "number") {
+          const numA = parseFloat(valueA.replace(/[,]+/g, "")) || 0;
+          const numB = parseFloat(valueB.replace(/[,]+/g, "")) || 0;
+          comparison = numA < numB ? -1 : (numA > numB ? 1 : 0);
+        } else if (sortType === "date") {
+          comparison = valueA.getTime() < valueB.getTime() ? -1 : (valueA.getTime() > valueB.getTime() ? 1 : 0);
+        }
+        else {
+          comparison = valueA.localeCompare(valueB);
         }
 
         return direction === "asc" ? comparison : -comparison;
       });
-      
-      rows.forEach(row => tbody.appendChild(row));
+
+      // Re-append rows along with their associated detail rows
+      rows.forEach(row => {
+        tbody.appendChild(row);
+        const detailRowId = row.dataset.detailRowId;
+        if (detailRowId) {
+          const detailRow = document.getElementById(detailRowId);
+          if (detailRow) {
+            tbody.appendChild(detailRow);
+          }
+        }
+      });
+    }
+
+    function applyFilters() {
+      const nameFilter = document.getElementById('filterName').value.toLowerCase();
+      const minSignatures = parseInt(document.getElementById('filterSignatures').value) || 0;
+      const createdAfterDate = document.getElementById('filterCreatedDate').value; //YYYY-MM-DD
+      const salienceArrowFilter = document.getElementById('filterSalienceArrow').value; // 'all', 'up', 'down'
+      const tbody = document.querySelector("#dataTable tbody");
+      const rows = Array.from(tbody.querySelectorAll("tr:not(.petition-details-row)"));
+
+      rows.forEach(row => {
+        let display = true;
+
+        // Filter by name
+        const petitionCell = row.cells[0];
+        const petitionName = petitionCell ? petitionCell.querySelector('a')?.textContent.toLowerCase() : '';
+        if (nameFilter && !petitionName.includes(nameFilter)) {
+          display = false;
+        }
+
+        // Filter by minimum signatures
+        const countCell = row.cells[1];
+        const signatureCount = parseInt(countCell?.textContent.replace(/,/g, '')) || 0;
+        if (signatureCount < minSignatures) {
+          display = false;
+        }
+
+        // Filter by created date (now at index 6)
+        const createdDateCell = row.cells[6]; // Get the created date cell
+        const rawCreatedDate = createdDateCell ? createdDateCell.getAttribute("data-value") : null; // Get raw ISO date
+        if (createdAfterDate && rawCreatedDate) {
+          if (rawCreatedDate < createdAfterDate) { // Direct string comparison works for YYYY-MM-DD
+            display = false;
+          }
+        } else if (createdAfterDate) {
+          display = false; // If we can't get the created date, don't show if a date filter is active
+        }
+
+        // Filter by salience arrow
+        const salienceCell = row.cells[2]; // Salience value is in cell 2
+        const salienceValue = parseFloat(salienceCell?.getAttribute("data-value")) || 0;
+        if (salienceArrowFilter === 'up' && salienceValue <= 1.0) {
+          display = false;
+        } else if (salienceArrowFilter === 'down' && salienceValue >= 1.0) {
+          display = false;
+        }
+
+        row.style.display = display ? '' : 'none';
+
+        // Also hide/show the associated detail row
+        const detailRowId = row.dataset.detailRowId;
+        if (detailRowId) {
+          const detailRow = document.getElementById(detailRowId);
+          if (detailRow) {
+            detailRow.style.display = display ? 'none' : 'none'; // Always hide details initially
+          }
+        }
+      });
+    }
+
+    function formatDateUK(isoDateString) {
+      if (!isoDateString) return 'N/A';
+      const date = new Date(isoDateString);
+      // Check if the date is valid before formatting
+      if (isNaN(date.getTime())) {
+        return 'Invalid Date';
+      }
+      return date.toLocaleDateString('en-GB', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
     }
 
     function populateTable(data) {
@@ -454,76 +302,150 @@
 
       if (!data || typeof data !== 'object') return;
 
-      // Initial sort by count descending for populating currentDisplayed
-      // The actual display sort will be handled by sortTable after this.
-      const sortedEntries = Object.entries(data)
-        .sort((a, b) => b[1].count - a[1].count); 
+      const sortedEntries = Object.entries(data).sort(([, a], [, b]) => b.count - a.count);
+
+      let detailRowCounter = 0; // To create unique IDs for detail rows
 
       sortedEntries.forEach(([petition, details]) => {
         const row = document.createElement("tr");
+        const petitionId = details.id;
+        const petitionDetails = getPetitionDetails(petitionId);
+        const createdDateISO = petitionDetails?.attributes?.created_at;
+        const formattedCreatedDate = formatDateUK(createdDateISO);
+
+        const detailRowId = `details-row-${petitionId}-${detailRowCounter++}`;
+        row.dataset.detailRowId = detailRowId; // Link main row to its detail row
 
         const petitionCell = document.createElement("td");
         const link = document.createElement("a");
-        link.href = `https://petition.parliament.uk/petitions/${details.id}`;
+        link.href = `https://petition.parliament.uk/petitions/${petitionId}`;
         link.textContent = petition;
         link.target = "_blank";
         link.rel = "noopener noreferrer";
         petitionCell.appendChild(link);
+        row.appendChild(petitionCell);
 
         const countCell = document.createElement("td");
         countCell.textContent = details.count.toLocaleString("en-UK");
-        // No data-value needed for countCell if sortTable parses textContent for numbers
+        row.appendChild(countCell);
 
-        const ukTotal = getUKTotal(details.id);
-        
-        const expectedProportion = 1 / 650; 
+        const ukTotal = getUKTotal(petitionId);
+        const expectedProportion = 1 / 650;
         const actualProportion = ukTotal > 0 ? (details.count / ukTotal) : 0;
         const salience = ukTotal > 0 ? (actualProportion / expectedProportion) : 0;
         const formattedSalience = salience.toFixed(2);
-        
+
         const salienceCell = document.createElement("td");
         salienceCell.className = "salience-cell";
         salienceCell.textContent = formattedSalience;
-        salienceCell.setAttribute("data-value", salience); 
-        
+        salienceCell.setAttribute("data-value", salience);
+        row.appendChild(salienceCell);
+
         const salienceIndicatorCell = document.createElement("td");
         salienceIndicatorCell.className = "salience-cell";
         const salienceIndicator = document.createElement("div");
         salienceIndicator.className = "salience-arrow " + (salience > 1.0 ? "up" : "down");
-        salienceIndicator.innerHTML = salience > 1.0 ? "&#x2191;" : "&#x2193;"; 
-        if (Math.abs(salience - 1.0) < 0.01) { // Neutral if very close to 1
-             salienceIndicator.innerHTML = ""; // Or some neutral symbol
-             salienceIndicator.className = "salience-arrow";
+        salienceIndicator.innerHTML = salience > 1.0 ? "↑" : "↓";
+        if (Math.abs(salience - 1.0) < 0.01) {
+          salienceIndicator.innerHTML = "";
+          salienceIndicator.className = "salience-arrow";
         }
         salienceIndicatorCell.appendChild(salienceIndicator);
-        
+        row.appendChild(salienceIndicatorCell);
+
+        // UK Total cell (now in uk-wide-info group)
         const ukTotalCell = document.createElement("td");
-        ukTotalCell.className = "details-cell";
+        ukTotalCell.className = "uk-wide-info-cell"; // Add uk-wide-info-cell class
         ukTotalCell.textContent = ukTotal ? ukTotal.toLocaleString("en-UK") : "N/A";
         ukTotalCell.setAttribute("data-value", ukTotal || 0);
-
-        const stateCell = document.createElement("td");
-        stateCell.className = "details-cell";
-        const petitionDetails = getPetitionDetails(details.id);
-        stateCell.textContent = petitionDetails?.attributes?.state || "N/A";
-
-        row.appendChild(petitionCell);
-        row.appendChild(countCell);
-        row.appendChild(salienceCell);
-        row.appendChild(salienceIndicatorCell);
         row.appendChild(ukTotalCell);
+
+        // State cell (now in uk-wide-info group)
+        const stateCell = document.createElement("td");
+        stateCell.className = "uk-wide-info-cell"; // Add uk-wide-info-cell class
+        stateCell.textContent = petitionDetails?.attributes?.state || "N/A";
         row.appendChild(stateCell);
 
+        // New 'Created' date cell (now in details group)
+        const createdCell = document.createElement("td");
+        createdCell.className = "details-cell"; // Add details-cell class
+        createdCell.textContent = formattedCreatedDate;
+        createdCell.setAttribute("data-value", createdDateISO || ''); // Store ISO for sorting
+        row.appendChild(createdCell);
+
+        // Details button cell (now in details group)
+        const detailsButtonCell = document.createElement("td");
+        detailsButtonCell.className = "details-cell"; // Add details-cell class
+        const detailsButton = document.createElement("button");
+        detailsButton.textContent = "Show Info";
+        detailsButton.classList.add("show-info-btn");
+        detailsButtonCell.appendChild(detailsButton);
+        row.appendChild(detailsButtonCell);
+
         tbody.appendChild(row);
+
+        // Create the hidden details row
+        const detailsRow = document.createElement("tr");
+        detailsRow.id = detailRowId;
+        detailsRow.classList.add("petition-details-row");
+        detailsRow.style.display = 'none'; // Initially hidden
+
+        const detailsContentCell = document.createElement("td");
+        // Total columns in the table (Petition, Count, Salience, Arrow, UK Total, State, Created, Details Btn) = 8
+        detailsContentCell.colSpan = 8;
+        detailsContentCell.classList.add("petition-details-content");
+
+        let contentHtml = '';
+        if (petitionDetails) {
+            contentHtml += `<strong>Background:</strong> <p>${petitionDetails.attributes.background || 'N/A'}</p>`;
+            if (petitionDetails.attributes.additional_details) {
+                contentHtml += `<strong>Additional Details:</strong> <p>${petitionDetails.attributes.additional_details}</p>`;
+            }
+            if (petitionDetails.government_response) {
+                contentHtml += `<strong>Government Response:</strong> <p><em>Responded on: ${formatDateUK(petitionDetails.government_response.responded_on)}</em></p><p>${petitionDetails.government_response.summary || 'N/A'}</p>`;
+                if (petitionDetails.government_response.details) {
+                    contentHtml += `<p>${petitionDetails.government_response.details}</p>`;
+                }
+            }
+            if (petitionDetails.debate) {
+                contentHtml += `<strong>Debate Info:</strong> <p><em>Debated on: ${formatDateUK(petitionDetails.debate.debated_on)}</em></p>`;
+                if (petitionDetails.debate.transcript_url) {
+                    contentHtml += `<p><a href="${petitionDetails.debate.transcript_url}" target="_blank" rel="noopener noreferrer">Transcript</a></p>`;
+                }
+                if (petitionDetails.debate.video_url && petitionDetails.debate.video_url !== "https://www.youtube.com/watch?v=a1BAM81Twgk") {
+                    contentHtml += `<p><a href="${petitionDetails.debate.video_url}" target="_blank" rel="noopener noreferrer">Video</a></p>`;
+                }
+                if (petitionDetails.debate.debate_pack_url) {
+                    contentHtml += `<p><a href="${petitionDetails.debate.debate_pack_url}" target="_blank" rel="noopener noreferrer">Debate Pack</a></p>`;
+                }
+            }
+        } else {
+            contentHtml = '<p>No additional details available for this petition.</p>';
+        }
+
+        detailsContentCell.innerHTML = contentHtml;
+        detailsRow.appendChild(detailsContentCell);
+        tbody.appendChild(detailsRow);
+
+        // Event listener for the details button
+        detailsButton.addEventListener('click', function() {
+          const isHidden = detailsRow.style.display === 'none';
+          detailsRow.style.display = isHidden ? '' : 'none';
+          this.textContent = isHidden ? 'Hide Info' : 'Show Info';
+        });
 
         currentDisplayed.push({
           petition,
           count: details.count,
+          created: createdDateISO, // Store ISO for export
           salience: formattedSalience,
           ukTotal,
           state: petitionDetails?.attributes?.state || null
         });
       });
+
+      // Apply filters after populating the table
+      applyFilters();
     }
 
     function getUKTotal(id) {
@@ -535,46 +457,16 @@
       return rawPetitionsData[id];
     }
 
-    document.getElementById("exportCsvBtn").addEventListener("click", function () {
+    document.getElementById("exportCsvBtn").addEventListener("click", function() {
       if (currentDisplayed.length === 0) return;
 
-      // Use the currently displayed (and sorted) order from the table for CSV
-      const tbody = document.querySelector("#dataTable tbody");
-      const rows = Array.from(tbody.querySelectorAll("tr"));
-      let csvData = [];
+      const csvHeader = "Petition,Count,Salience,UK Total,State,Created\n"; // Updated CSV header
+      const csvRows = currentDisplayed.map(item =>
+        `"${item.petition.replace(/"/g, '""')}",${item.count},${item.salience},${item.ukTotal ?? "N/A"},${item.state ?? "N/A"},"${formatDateUK(item.created)}"`
+      ).join("\n");
 
-      rows.forEach(row => {
-          const petitionLink = row.cells[0].querySelector("a");
-          const petitionName = petitionLink ? petitionLink.textContent : row.cells[0].textContent;
-          const count = row.cells[1].textContent;
-          
-          let salienceValue = "N/A";
-          let ukTotalValue = "N/A";
-          let stateValue = "N/A";
-
-          const table = document.getElementById("dataTable");
-          if (table.classList.contains("show-details")) {
-              salienceValue = row.cells[2].textContent;
-              ukTotalValue = row.cells[4].textContent;
-              stateValue = row.cells[5].textContent;
-          }
-          
-          csvData.push({
-              petition: petitionName,
-              count: count.replace(/,/g, ''), // Remove commas for CSV
-              salience: salienceValue,
-              ukTotal: ukTotalValue.replace(/,/g, ''), // Remove commas for CSV
-              state: stateValue
-          });
-      });
-
-
-      let csv = "Petition,Count,Salience,UK Total,State\n";
-      csvData.forEach(r => {
-        csv += `"${r.petition.replace(/"/g, '""')}",${r.count},${r.salience},${r.ukTotal ?? "N/A"},${r.state ?? "N/A"}\n`;
-      });
-
-      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const csvString = csvHeader + csvRows;
+      const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.setAttribute("href", url);
@@ -584,11 +476,20 @@
       link.click();
       document.body.removeChild(link);
     });
-    
+
     document.addEventListener("DOMContentLoaded", function() {
       setupSortableColumns();
+
+      const filterNameInput = document.getElementById('filterName');
+      const filterSignaturesInput = document.getElementById('filterSignatures');
+      const filterCreatedDateInput = document.getElementById('filterCreatedDate');
+      const filterSalienceArrowInput = document.getElementById('filterSalienceArrow');
+
+      filterNameInput.addEventListener('input', applyFilters);
+      filterSignaturesInput.addEventListener('input', applyFilters);
+      filterCreatedDateInput.addEventListener('input', applyFilters);
+      filterSalienceArrowInput.addEventListener('change', applyFilters); // Use 'change' for select elements
     });
   </script>
-
 </body>
 </html>

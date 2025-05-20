@@ -1,0 +1,314 @@
+body {
+  font-family: system-ui, sans-serif;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  max-width: 1200px;
+  box-sizing: border-box;
+}
+
+h1 {
+  margin-bottom: 1rem;
+}
+
+.control {
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+.controls-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+table {
+  width: 100%;
+  max-width: 1000px;
+  border-collapse: collapse; /* This ensures default cell borders are used */
+  background-color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Column group background colors */
+.overview-group col {
+  background-color: #ffffff;
+}
+
+.salience-group col {
+  background-color: #f0fff3;
+}
+
+.uk-wide-info-group col { /* New group for UK Total and State */
+  background-color: #f9fafe;
+}
+
+.details-group col { /* Now only for Created Date and Details Button */
+  background-color: #f9fafe; /* Same background for visual consistency */
+}
+
+/* Removed all custom vertical border rules */
+/*
+table thead tr:first-child th.salience-header {
+  border-left: 2px solid #ccc;
+}
+
+table thead tr:first-child th.uk-wide-info-header {
+  border-left: 2px solid #ccc;
+}
+
+table thead tr:first-child th.details-header {
+  border-left: 2px solid #ccc;
+}
+
+.salience-group {
+  border-left: 2px solid #ccc;
+}
+
+.uk-wide-info-group {
+  border-left: 2px solid #ccc;
+}
+
+.details-group {
+  border-left: 2px solid #ccc;
+}
+*/
+
+th,
+td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border: 1px solid #e0e0e0; /* Softer border color for all cell borders */
+}
+
+th {
+  background-color: #f1f1f1;
+  font-weight: bold;
+  cursor: pointer;
+  user-select: none;
+}
+
+th:hover {
+  background-color: #e5e5e5;
+}
+
+/* Modified to only apply to sortable columns */
+th[data-sort]::after {
+  content: '↕️';
+  opacity: 0.2;
+  margin-left: 5px;
+}
+
+th[data-sort][data-sort-direction="asc"]::after {
+  content: '↑';
+  opacity: 1;
+}
+
+th[data-sort][data-sort-direction="desc"]::after {
+  content: '↓';
+  opacity: 1;
+}
+
+/* Column group headers */
+.colgroup-header {
+  text-align: center;
+  background-color: #e5e5e5;
+  font-weight: bold;
+  padding: 0.5rem;
+  border: 1px solid #e0e0e0; /* Apply softened border to group headers too */
+}
+
+.colgroup-header.details-col,
+.colgroup-header.salience-col,
+.colgroup-header.uk-wide-info-col { /* Add new class for UK-wide Info header */
+  display: none; /* Hidden by default */
+}
+
+.show-details .colgroup-header.details-col,
+.show-details .colgroup-header.salience-col,
+.show-details .colgroup-header.uk-wide-info-col { /* Show when details are active */
+  display: table-cell; /* Visible when details are shown */
+}
+
+tr:nth-child(even) {
+  background-color: #f6f6f6;
+}
+
+/* Detail/Salience columns and cells (hidden by default) */
+.details-col,
+.details-cell,
+.salience-col,
+.salience-cell,
+.uk-wide-info-col, /* New class for UK-wide Info columns */
+.uk-wide-info-cell { /* New class for UK-wide Info cells */
+  display: none;
+}
+
+.show-details .details-col,
+.show-details .details-cell,
+.show-details .salience-col,
+.show-details .salience-cell,
+.show-details .uk-wide-info-col, /* Show when details are active */
+.show-details .uk-wide-info-cell { /* Show when details are active */
+  display: table-cell; /* Visible when details are shown */
+}
+
+.toggle-btn-cell {
+  text-align: right;
+}
+
+/* Styles for the new "Show Info" button */
+.show-info-btn {
+  background-color: #007bff; /* Primary button color */
+  color: white;
+  border: 1px solid #007bff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle button shadow */
+}
+
+.show-info-btn:hover {
+  background-color: #0056b3;
+}
+
+.salience-arrow {
+  font-size: 20px;
+  text-align: center;
+  padding: 5px;
+  border-radius: 4px;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+}
+
+.salience-arrow.up {
+  background-color: #e6ffec;
+  color: #2da44e;
+}
+
+.salience-arrow.down {
+  background-color: #ffebe9;
+  color: #cf222e;
+}
+
+/* Styles for the expanded petition details row */
+.petition-details-row {
+  background-color: #f0f8ff; /* Light blue background for expanded details */
+  border-top: 2px solid #c0c0c0; /* Softened border color */
+  border-bottom: 2px solid #c0c0c0; /* Softened border color */
+}
+
+.petition-details-content {
+  padding: 1rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.petition-details-content strong {
+  display: block;
+  margin-top: 0.8rem;
+  margin-bottom: 0.3rem;
+  font-size: 1rem;
+  color: #333;
+}
+
+.petition-details-content p {
+  margin-bottom: 0.5rem;
+}
+
+.petition-details-content a {
+  color: #007bff;
+  text-decoration: underline;
+}
+
+
+footer {
+  margin-top: auto;
+  padding: 1rem;
+  font-size: 0.85rem;
+  color: #666;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .controls-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .control {
+    width: 100%; /* Full width on small screens */
+    max-width: none; /* Remove max-width constraint */
+  }
+
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
+    display: block;
+  }
+
+  th {
+    display: none;
+  }
+
+  td {
+    position: relative;
+    padding-left: 50%;
+  }
+
+  td::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    padding-left: 1rem;
+    font-weight: bold;
+    white-space: nowrap;
+  }
+
+  tr {
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #ccc;
+  }
+
+  .toggle-btn-cell {
+    text-align: left;
+    padding-top: 1rem;
+  }
+
+  /* Remove all vertical lines in mobile view */
+  .show-details td:nth-child(2),
+  .show-details td:nth-child(4),
+  .show-details th:nth-child(2),
+  .show-details th:nth-child(4),
+  .show-details .salience-col:first-child th {
+    border-left: none;
+  }
+
+  /* Remove colgroup borders in mobile view */
+  table colgroup:nth-of-type(n+2) {
+    border-right: none;
+  }
+
+  /* Ensure expanded details row behaves correctly in mobile */
+  .petition-details-row {
+    display: block !important; /* Override inline style for mobile if needed */
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .petition-details-content {
+    padding-left: 1rem; /* Adjust padding for mobile */
+  }
+}
