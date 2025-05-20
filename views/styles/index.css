@@ -268,18 +268,24 @@ tr:nth-child(even) {
   display: table-cell !important; /* Ensure it behaves like a table cell */
 }
 
-.petition-details-content {
+/* NEW: Grid container for the detail boxes */
+.petition-details-grid-container {
   padding: 1.5rem;
   font-size: 0.95rem;
   line-height: 1.6;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: 1fr 1fr; /* Two columns for box one and box two */
+  grid-template-rows: auto auto; /* Two rows: first for boxes 1 & 2, second for box 3 */
+  gap: 1.5rem; /* Gap between the boxes */
   width: 100%;
   box-sizing: border-box;
+  /* Explicitly define grid areas for robust layout */
+  grid-template-areas:
+    "petition-box response-box"
+    "missing-box missing-box";
 }
 
-.detail-section {
+.detail-box {
   background-color: #ffffff;
   padding: 1rem;
   border-radius: 8px;
@@ -289,7 +295,37 @@ tr:nth-child(even) {
   gap: 0.5rem; /* Space between detail items within a section */
 }
 
-.detail-section strong {
+/* Assign grid areas to the specific boxes */
+.petition-details-grid-container > .detail-box:nth-child(1) { /* Petition Details box */
+  grid-area: petition-box;
+}
+
+.petition-details-grid-container > .detail-box:nth-child(2) { /* Response & Debate box */
+  grid-area: response-box;
+}
+
+/* NEW: Styling for the full-width missing info box */
+.missing-info-box {
+  grid-area: missing-box; /* Assign to the missing-box area */
+  background-color: #fff3cd; /* Light yellow background */
+  border: 1px solid #ffeeba;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 0; /* No top margin as gap handles it */
+  color: #664d03; /* Darker text for contrast */
+  font-size: 0.9rem;
+  display: flex; /* Use flex for internal layout */
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.missing-info-box strong {
+  font-weight: 700;
+  margin-right: 0.5rem;
+  display: block; /* Ensure strong takes its own line */
+}
+
+.detail-box strong {
   font-size: 1.05rem; /* Slightly larger heading for sections */
   color: #333;
   margin-bottom: 0.5rem;
@@ -320,33 +356,16 @@ tr:nth-child(even) {
   text-decoration: underline;
 }
 
-.detail-section ul {
+.detail-box ul {
   list-style: disc inside; /* Bullet points for lists */
   margin: 0.5rem 0 0 1rem;
   padding: 0;
 }
 
-.detail-section li {
+.detail-box li {
   margin-bottom: 0.2rem;
   color: #333;
 }
-
-.missing-info-section {
-  grid-column: 1 / -1; /* Span full width for missing info in grid layout */
-  background-color: #fff3cd; /* Light yellow background */
-  border: 1px solid #ffeeba;
-  border-radius: 8px;
-  padding: 1rem;
-  margin-top: 1.5rem;
-  color: #664d03; /* Darker text for contrast */
-  font-size: 0.9rem;
-}
-
-.missing-info-section strong {
-  font-weight: 700;
-  margin-right: 0.5rem;
-}
-
 
 footer {
   margin-top: auto;
@@ -354,6 +373,17 @@ footer {
   font-size: 0.85rem;
   color: #666;
   text-align: center;
+}
+
+@media (max-width: 900px) { /* Adjusted breakpoint for grid layout change */
+  .petition-details-grid-container {
+    grid-template-columns: 1fr; /* Single column for all boxes on smaller screens */
+    /* Stack grid areas vertically on smaller screens */
+    grid-template-areas:
+      "petition-box"
+      "response-box"
+      "missing-box";
+  }
 }
 
 @media (max-width: 600px) {
@@ -426,8 +456,8 @@ footer {
     box-sizing: border-box;
   }
 
-  .petition-details-content {
+  /* The grid container will already handle single column on small screens */
+  .petition-details-grid-container {
     padding-left: 1rem; /* Adjust padding for mobile */
-    grid-template-columns: 1fr; /* Single column on small screens */
   }
 }

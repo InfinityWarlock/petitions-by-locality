@@ -4,8 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Petitioners by Locality</title>
-  <link rel="stylesheet" href="styles/index.css" />
-</head>
+  <link rel="stylesheet" href="styles/index.css" /> </head>
 <body>
 
   <h1>Petitioners by Locality</h1>
@@ -105,18 +104,59 @@
           rawPetitionsData = data.rawPetitionsData || {};
 
           if (Array.isArray(rawPetitionsData)) {
+            // Convert array of petitions to an object keyed by petition ID for easier lookup
             rawPetitionsData = Object.fromEntries(rawPetitionsData.map(p => [p.id, p]));
           }
 
           populateConstituencySelector(Object.keys(signaturesByConstituency));
           document.getElementById("controlsContainer").style.display = "flex";
         } catch (err) {
-          alert("Error parsing JSON file.");
+          // Using a custom message box instead of alert()
+          displayMessageBox("Error parsing JSON file. Please ensure it's a valid JSON structure.");
           console.error(err);
         }
       };
       reader.readAsText(file);
     });
+
+    /**
+     * Displays a custom message box.
+     * @param {string} message The message to display.
+     */
+    function displayMessageBox(message) {
+      const messageBox = document.createElement('div');
+      messageBox.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        z-index: 1000;
+        text-align: center;
+        max-width: 400px;
+        font-family: system-ui, sans-serif;
+      `;
+      messageBox.innerHTML = `
+        <p>${message}</p>
+        <button style="
+          background-color: #6366f1;
+          color: white;
+          border: none;
+          padding: 10px 20px;
+          border-radius: 5px;
+          cursor: pointer;
+          margin-top: 15px;
+        ">OK</button>
+      `;
+      document.body.appendChild(messageBox);
+
+      messageBox.querySelector('button').addEventListener('click', () => {
+        document.body.removeChild(messageBox);
+      });
+    }
 
     function populateConstituencySelector(constituencies) {
       const select = document.getElementById("constituencySelect");
@@ -315,7 +355,7 @@
         if (detailRowId) {
           const detailRow = document.getElementById(detailRowId);
           if (detailRow) {
-            detailRow.style.display = display ? 'none' : 'none'; // Always hide details initially
+            detailRow.style.display = 'none'; // Always hide details initially when filters are applied
           }
         }
       });
@@ -447,105 +487,111 @@
         detailsRow.style.display = 'none'; // Initially hidden
 
         const detailsContentCell = document.createElement("td");
-        // Total columns in the table (Petition, Count, Salience, Arrow, UK Total, State, Written Response, Debated, Created, Details Btn) = 10
+        // Total columns in the table = 10
         detailsContentCell.colSpan = 10;
-        detailsContentCell.classList.add("petition-details-content");
+        detailsContentCell.classList.add("petition-details-grid-container"); // New class for grid layout
 
-        let contentHtml = '';
+        // --- Box One: Petition Details ---
+        let petitionInfoHTML = `<div class="detail-box"><strong>Petition Details</strong>`;
+        const addPetitionDetail = (label, value, formatFn = null) => {
+          if (value) {
+            petitionInfoHTML += `<div class="detail-item"><strong>${label}:</strong> <p>${formatFn ? formatFn(value) : value}</p></div>`;
+          }
+        };
+        addPetitionDetail('Action', petitionDetails?.attributes?.action);
+        addPetitionDetail('Background', petitionDetails?.attributes?.background, (c) => c?.replaceAll("\r\n\r\n", "<br><br>"));
+        addPetitionDetail('Additional Details', petitionDetails?.attributes?.additional_details, (c) => c?.replaceAll("\r\n\r\n", "<br><br>"));
+        addPetitionDetail('Creator', petitionDetails?.attributes?.creator_name);
+        addPetitionDetail('Petition Type', petitionDetails?.attributes?.petition_type);
+        addPetitionDetail('Opened', petitionDetails?.attributes?.opening_at, formatDateUK);
+        addPetitionDetail('Closed', petitionDetails?.attributes?.closing_at, formatDateUK);
+        petitionInfoHTML += `</div>`;
+
+
+        // --- Box Two: Response & Debate ---
+        let responseInfoHTML = `<div class="detail-box"><strong>Response & Debate</strong>`;
+        const addResponseDetail = (label, value, formatFn = null) => {
+          if (value) {
+            responseInfoHTML += `<div class="detail-item"><strong>${label}:</strong> <p>${formatFn ? formatFn(value) : value}</p></div>`;
+          }
+        };
+        if (petitionDetails?.attributes?.government_response) {
+          const govResponse = petitionDetails.attributes.government_response;
+          responseInfoHTML += `<strong>Government Response:</strong>`;
+          addResponseDetail('Responded on', govResponse.responded_on, formatDateUK);
+          addResponseDetail('Summary', govResponse.summary);
+          addResponseDetail('Details', govResponse.details, (c) => c?.replaceAll("\r\n\r\n", "<br><br>"));
+        }
+        if (petitionDetails?.attributes?.debate) {
+          const debateInfo = petitionDetails.attributes.debate;
+          if (petitionDetails?.attributes?.government_response) { // Add a break if there's also a government response
+            responseInfoHTML += `<br>`;
+          }
+          responseInfoHTML += `<strong>Debate Info:</strong>`;
+          addResponseDetail('Debated on', debateInfo.debated_on, formatDateUK);
+          const addLink = (label, url, text) => {
+            if (url && url !== "https://www.youtube.com/watch?v=a1BAM81Twgk") {
+              responseInfoHTML += `<div class="detail-item"><strong>${label}:</strong> <p><a href="${url}" target="_blank" rel="noopener noreferrer">${text}</a></p></div>`;
+            }
+          };
+          addLink('Transcript', debateInfo.transcript_url, 'Transcript');
+          addLink('Video', debateInfo.video_url, 'Video');
+          addLink('Debate Pack', debateInfo.debate_pack_url, 'Debate Pack');
+        }
+        responseInfoHTML += `</div>`;
+
+
+        // --- Box Three: Missing Information / Rejection / Departments / Topics ---
+        let missingInfoHTML = `<div class="missing-info-box"><strong>Additional Information & Missing Fields</strong>`;
         const missingFields = [];
 
-        const addDetail = (label, value, formatFn = null) => {
-            if (value) {
-                contentHtml += `<div class="detail-item"><strong>${label}:</strong> `;
-                if (formatFn) {
-                    contentHtml += `<p>${formatFn(value)}</p></div>`;
-                } else {
-                    contentHtml += `<p>${value}</p></div>`;
-                }
-            } else {
-                missingFields.push(label);
-            }
-        };
+        // Check for missing core details (if not present in Box 1)
+        if (!petitionDetails?.attributes?.action) missingFields.push('Action');
+        if (!petitionDetails?.attributes?.background) missingFields.push('Background');
+        if (!petitionDetails?.attributes?.additional_details) missingFields.push('Additional Details');
+        if (!petitionDetails?.attributes?.creator_name) missingFields.push('Creator Name');
+        if (!petitionDetails?.attributes?.petition_type) missingFields.push('Petition Type');
+        if (!petitionDetails?.attributes?.opening_at) missingFields.push('Opened Date');
+        if (!petitionDetails?.attributes?.closing_at) missingFields.push('Closed Date');
 
-        const addLinkDetail = (label, url, text) => {
-            if (url && url !== "https://www.youtube.com/watch?v=a1BAM81Twgk") {
-                contentHtml += `<div class="detail-item"><strong>${label}:</strong> <p><a href="${url}" target="_blank" rel="noopener noreferrer">${text}</a></p></div>`;
-            } else {
-                missingFields.push(label);
-            }
-        };
-
-        contentHtml += `<div class="detail-section">`;
-        addDetail('Action', petitionDetails?.attributes?.action);
-        addDetail('Background', petitionDetails?.attributes?.background);
-        addDetail('Additional Details', petitionDetails?.attributes?.additional_details);
-        addDetail('Creator', petitionDetails?.attributes?.creator_name);
-        addDetail('Petition Type', petitionDetails?.attributes?.petition_type);
-        addDetail('Opened', petitionDetails?.attributes?.opening_at, formatDateUK);
-        addDetail('Closed', petitionDetails?.attributes?.closing_at, formatDateUK);
-        contentHtml += `</div>`; // End detail-section
-
-        if (petitionDetails?.attributes?.government_response) {
-            const govResponse = petitionDetails.attributes.government_response;
-            contentHtml += `<div class="detail-section"><strong>Government Response:</strong>`;
-            addDetail('Responded on', govResponse.responded_on, formatDateUK);
-            addDetail('Summary', govResponse.summary);
-            addDetail('Details', govResponse.details);
-            contentHtml += `</div>`; // End detail-section
-        } else {
-            missingFields.push('Government Response');
-        }
-
-        if (petitionDetails?.attributes?.debate) {
-            const debateInfo = petitionDetails.attributes.debate;
-            contentHtml += `<div class="detail-section"><strong>Debate Info:</strong>`;
-            addDetail('Debated on', debateInfo.debated_on, formatDateUK);
-            addLinkDetail('Transcript', debateInfo.transcript_url, 'Transcript');
-            addLinkDetail('Video', debateInfo.video_url, 'Video');
-            addLinkDetail('Debate Pack', debateInfo.debate_pack_url, 'Debate Pack');
-            contentHtml += `</div>`; // End detail-section
-        } else {
-            missingFields.push('Debate Info');
-        }
+        // Check for missing response/debate (if not present in Box 2)
+        if (!petitionDetails?.attributes?.government_response) missingFields.push('Government Response');
+        if (!petitionDetails?.attributes?.debate) missingFields.push('Debate Info');
 
         if (petitionDetails?.attributes?.rejection) {
-            const rejection = petitionDetails.attributes.rejection;
-            contentHtml += `<div class="detail-section"><strong>Rejection:</strong>`;
-            addDetail('Rejection Code', rejection.code);
-            addDetail('Rejection Details', rejection.details);
-            contentHtml += `</div>`; // End detail-section
+          const rejection = petitionDetails.attributes.rejection;
+          missingInfoHTML += `<div class="detail-item"><strong>Rejection Code:</strong> <p>${rejection.code}</p></div>`;
+          missingInfoHTML += `<div class="detail-item"><strong>Rejection Details:</strong> <p>${rejection.details}</p></div>`;
         } else {
-            missingFields.push('Rejection Info');
+          missingFields.push('Rejection Info');
         }
 
         if (petitionDetails?.attributes?.departments && petitionDetails.attributes.departments.length > 0) {
-            contentHtml += `<div class="detail-section"><strong>Departments:</strong> <ul>`;
-            petitionDetails.attributes.departments.forEach(dept => {
-                contentHtml += `<li>${dept.name}</li>`;
-            });
-            contentHtml += `</ul></div>`; // End detail-section
+          missingInfoHTML += `<strong>Departments:</strong> <ul>`;
+          petitionDetails.attributes.departments.forEach(dept => {
+            missingInfoHTML += `<li>${dept.name}</li>`;
+          });
+          missingInfoHTML += `</ul>`;
         } else {
-            missingFields.push('Departments');
+          missingFields.push('Departments');
         }
 
         if (petitionDetails?.attributes?.topics && petitionDetails.attributes.topics.length > 0) {
-            contentHtml += `<div class="detail-section"><strong>Topics:</strong> <ul>`;
-            petitionDetails.attributes.topics.forEach(topic => {
-                contentHtml += `<li>${topic}</li>`;
-            });
-            contentHtml += `</ul></div>`; // End detail-section
+          missingInfoHTML += `<strong>Topics:</strong> <ul>`;
+          petitionDetails.attributes.topics.forEach(topic => {
+            missingInfoHTML += `<li>${topic}</li>`;
+          });
+          missingInfoHTML += `</ul>`;
         } else {
-            missingFields.push('Topics');
+          missingFields.push('Topics');
         }
 
-
-        // List of empty values
         if (missingFields.length > 0) {
-            contentHtml += `<div class="missing-info-section"><strong>Missing Information:</strong> <span>${missingFields.join(', ')}</span></div>`;
+          missingInfoHTML += `<div class="missing-fields-list"><strong>Missing Fields:</strong> <span>${missingFields.join(', ')}</span></div>`;
         }
+        missingInfoHTML += `</div>`; // Close missing-info-box
 
-
-        detailsContentCell.innerHTML = contentHtml;
+        detailsContentCell.innerHTML = petitionInfoHTML + responseInfoHTML + missingInfoHTML;
         detailsRow.appendChild(detailsContentCell);
         tbody.appendChild(detailsRow);
 
