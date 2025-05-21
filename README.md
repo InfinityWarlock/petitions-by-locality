@@ -5,6 +5,7 @@ This is a WIP project.
 ## How to install me
 
 1. Download (ie `$ git clone`). Currently no dependencies, so no need for `$ npm i`. 
+2. For the AI bits, create a `.env` file, and add your GEMINI_API_KEY. 
 2. In the root of the repository, run: `$ node run_me.js`. 
 3. Open index.html in your browser and select `data/constituencies_data.json`. This process can 100% be improved, but it does work! 
 
