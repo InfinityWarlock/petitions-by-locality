@@ -54,6 +54,7 @@ async function main(output_path) {
         signaturesByConstituency: {},
         rawPetitionsData: {}
     };
+
     let doneConstituencies = false; // this is stupid
 
     
