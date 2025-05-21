@@ -114,27 +114,42 @@ table {
 }
 
 /* Define widths for all columns when all are visible */
-.overview-group col:first-child { width: 20%; } /* Petition Name (0.8 of 25%) */
-.overview-group col:nth-child(2) { width: 12%; } /* Count (increased to compensate) */
+.overview-group col:first-child { width: 18%; } /* Petition Name */
+.overview-group col:nth-child(2) { width: 10%; } /* Count */
+.overview-group col:nth-child(3) { width: 10%; } /* Local Salience Category */
+.overview-group col:nth-child(4) { width: 10%; } /* Actual:Expected Salience Ratio */
 
-.salience-group col:first-child { width: 10%; } /* Actual:Expected Salience */
-.salience-group col:nth-child(2) { width: 5%; } /* Salience Arrow */
+/* Hide the old salience group as it's no longer needed */
+.salience-group,
+.salience-value-col {
+  display: none;
+}
 
-.uk-wide-info-group col:first-child { width: 10%; } /* UK Total */
-.uk-wide-info-group col:nth-child(2) { width: 10%; } /* State */
+.uk-wide-info-group col:first-child { width: 9%; } /* UK Total */
+.uk-wide-info-group col:nth-child(2) { width: 9%; } /* State */
 
-.response-group col:first-child { width: 10%; } /* Written response? */
-.response-group col:nth-child(2) { width: 10%; } /* Debated? */
+.response-group col:first-child { width: 9%; } /* Written response? */
+.response-group col:nth-child(2) { width: 9%; } /* Debated? */
 
-.details-group col:first-child { width: 8%; } /* Created Date (increased to compensate) */
-.details-group col:nth-child(2) { width: 5%; } /* Details Button */
+.details-group col:first-child { width: 9%; } /* Created Date */
+.details-group col:nth-child(2) { width: 7%; } /* Details Button */
 
+
+/* When .show-details is NOT active, hide these groups */
+table:not(.show-details) .uk-wide-info-col,
+table:not(.show-details) .uk-wide-info-header,
+table:not(.show-details) .response-col,
+table:not(.show-details) .response-header,
+table:not(.show-details) .details-col,
+table:not(.show-details) .details-header {
+  display: none;
+}
 
 /* When .show-details is NOT active, adjust overview columns to fill space */
-table:not(.show-details) .overview-group col:first-child,
-table:not(.show-details) .overview-group col:nth-child(2) {
-  width: 50%; /* Each takes 50% of the table width when other columns are hidden */
-}
+table:not(.show-details) .overview-group col:first-child { width: 30%; } /* Petition Name */
+table:not(.show-details) .overview-group col:nth-child(2) { width: 25%; } /* Count */
+table:not(.show-details) .overview-group col:nth-child(3) { width: 25%; } /* Local Salience Category */
+table:not(.show-details) .overview-group col:nth-child(4) { width: 20%; } /* Actual:Expected Salience Ratio */
 
 
 th,
@@ -182,17 +197,16 @@ th[data-sort][data-sort-direction="desc"]::after {
   border: 1px solid #e0e0e0; /* Apply softened border to group headers too */
 }
 
+/* These headers are now controlled by the table:not(.show-details) rule */
 .colgroup-header.details-col,
-.colgroup-header.salience-col,
-.colgroup-header.uk-wide-info-col, /* Add new class for UK-wide Info header */
-.colgroup-header.response-col { /* NEW class for Response header */
-  display: none; /* Hidden by default */
+.colgroup-header.uk-wide-info-col,
+.colgroup-header.response-col {
+  display: none; /* Hidden by default, shown by .show-details */
 }
 
 .show-details .colgroup-header.details-col,
-.show-details .colgroup-header.salience-col,
-.show-details .colgroup-header.uk-wide-info-col, /* Show when details are active */
-.show-details .colgroup-header.response-col { /* Show when details are active */
+.show-details .colgroup-header.uk-wide-info-col,
+.show-details .colgroup-header.response-col {
   display: table-cell; /* Visible when details are shown */
 }
 
@@ -200,26 +214,22 @@ tr:nth-child(even) {
   background-color: #f6f6f6;
 }
 
-/* Detail/Salience columns and cells (hidden by default) */
+/* Detail columns and cells (hidden by default) */
 .details-col,
 .details-cell,
-.salience-col,
-.salience-cell,
-.uk-wide-info-col, /* New class for UK-wide Info columns */
-.uk-wide-info-cell, /* New class for UK-wide Info cells */
-.response-col, /* NEW class for Response columns */
-.response-cell { /* NEW class for Response cells */
+.uk-wide-info-col,
+.uk-wide-info-cell,
+.response-col,
+.response-cell {
   display: none;
 }
 
 .show-details .details-col,
 .show-details .details-cell,
-.show-details .salience-col,
-.show-details .salience-cell,
-.show-details .uk-wide-info-col, /* Show when details are active */
-.show-details .uk-wide-info-cell, /* Show when details are active */
-.show-details .response-col, /* Show when details are active */
-.show-details .response-cell { /* Show when details are active */
+.show-details .uk-wide-info-col,
+.show-details .uk-wide-info-cell,
+.show-details .response-col,
+.show-details .response-cell {
   display: table-cell; /* Visible when details are shown */
 }
 
@@ -240,25 +250,38 @@ tr:nth-child(even) {
   color: #0056b3;
 }
 
-.salience-arrow {
-  font-size: 20px;
+/* Styles for the salience categories */
+.salience-category-cell {
   text-align: center;
-  padding: 5px;
-  border-radius: 4px;
-  display: inline-block;
-  width: 30px;
-  height: 30px;
-  line-height: 30px;
+  font-size: 0.85rem; /* Slightly smaller text */
+  padding: 0.3rem 0.5rem; /* Padding for the box effect */
+  border-radius: 4px; /* Rounded corners for the box */
+  display: inline-block; /* To make padding/border work like a box */
+  min-width: 80px; /* Ensure consistent width */
 }
 
-.salience-arrow.up {
-  background-color: #e6ffec;
-  color: #2da44e;
+.more-salient {
+  background-color: #e6ffec; /* Light green */
+  color: #2da44e; /* Dark green text */
+  border: 1px solid #2da44e; /* Green border */
 }
 
-.salience-arrow.down {
-  background-color: #ffebe9;
-  color: #cf222e;
+.about-salient {
+  background-color: #f0f0f0; /* Light grey */
+  color: #555; /* Dark grey text */
+  border: 1px solid #ccc; /* Grey border */
+}
+
+.less-salient {
+  background-color: #ffebe9; /* Light red */
+  color: #cf222e; /* Dark red text */
+  border: 1px solid #cf222e; /* Red border */
+}
+
+/* New style for the salience ratio cell */
+.salience-ratio-cell {
+  font-size: 0.85rem; /* Consistent smaller text */
+  text-align: center;
 }
 
 /* Styles for the expanded petition details row */
