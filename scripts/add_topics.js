@@ -46,7 +46,7 @@ const LLMWrapper = limiter.wrap(async function(prompt) {
     return await makeGeminiRequest(prompt);
 });
 
-async function extractTopic(consolidatedDescriptionText) {
+async function extractTopic(consolidatedDescriptionText, savedPetitionsFilePath) {
 
 }
 
