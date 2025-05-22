@@ -391,7 +391,7 @@ function applyFilters() {
 
         // NEW: Filter by topic (cell index 4)
         const topicCell = row.cells[4];
-        const petitionTopic = topicCell ? topicCell.textContent : '';
+        const petitionTopic = topicCell ? topicCell.textContent.replace(/\s*\(AI-generated, may not be accurate\)/, '') : ''; // Remove AI note for comparison
         if (topicFilter !== 'all' && petitionTopic !== topicFilter) {
             display = false;
         }
@@ -593,7 +593,7 @@ function populateTable(data) {
             responseInfoHTML += `<strong>Debate Info:</strong>`;
             addResponseDetail('Debated on', debateInfo.debated_on, formatDateUK);
             const addLink = (label, url, text) => {
-                if (url && url !== "https://www.youtube.com/watch?v=a1BAM81Twgk") {
+                if (url) { // Only check if URL is truthy
                     responseInfoHTML += `<div class="detail-item"><strong>${label}:</strong> <p><a href="${url}" target="_blank" rel="noopener noreferrer">${text}</a></p></div>`;
                 }
             };
@@ -640,7 +640,7 @@ function populateTable(data) {
 
         // Display topic from /topicsData if available, otherwise check rawPetitionsData, then mark as missing
         if (petitionTopic && petitionTopic !== 'N/A') {
-            missingInfoHTML += `<div class="detail-item"><strong>Topic:</strong> <p>${petitionTopic}</p></div>`;
+            missingInfoHTML += `<div class="detail-item"><strong>Topic:</strong> <p>${petitionTopic} <small>(AI-generated, may not be accurate)</small></p></div>`; // Added AI-generated note
         } else if (petitionDetails?.attributes?.topics && petitionDetails.attributes.topics.length > 0) {
             missingInfoHTML += `<strong>Topics (from petition data):</strong> <ul>`;
             petitionDetails.attributes.topics.forEach(topic => {
