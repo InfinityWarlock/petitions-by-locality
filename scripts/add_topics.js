@@ -54,17 +54,18 @@ const LLMWrapper = limiter.wrap(async function (prompt) {
     return await makeGeminiRequest(prompt);
 });
 
-async function extractTopic(petition, savedPetitionsObject) {
+async function extractTopic(petition, savedPetitionsObject, dummyTopic = false) {
     if (petition.id in savedPetitionsObject) {
         console.log(`Petition ${petition.id} already has a topic: ${savedPetitionsObject[petition.id]}`);
         return savedPetitionsObject[petition.id];
     } else {
-        const consolidatedDescriptionText =
-            `Desired action:\n${petition.attributes.action}\n` +
-            `Background:\n${petition.attributes.background}\n` +
-            `Additional details:\n${petition.attributes.additional_details}\n`;
+        if (dummyTopic) {
+            const consolidatedDescriptionText =
+                `Desired action:\n${petition.attributes.action}\n` +
+                `Background:\n${petition.attributes.background}\n` +
+                `Additional details:\n${petition.attributes.additional_details}\n`;
 
-        const prompt = `Your job is to extract the topic of a petition from the following description. If there is only one topic, return just the topic. For example, this petition has one topic: "Action:
+            const prompt = `Your job is to extract the topic of a petition from the following description. If there is only one topic, return just the topic. For example, this petition has one topic: "Action:
 
 Shut the migrant hotels down now and deport illegal migrants housed there
 Background:
@@ -77,15 +78,17 @@ Creator:
 
 Robert Barnes". The topic is "illegal immigration". If there are multiple topics, return them as a comma-separated list. You are operating in the UK context. Topics include (but are not limited to): NHS, illegal immigration, EU, cost of living, housing, education, environment, net zero, crime, police, energy, transport, defence, Gaza, foreign affairs, social care. But there might be others. Prefer to return one topic.`;
 
-        const requestPrompt = `${prompt}\n\nHere is the description: \n\n${consolidatedDescriptionText}`;
-        const petitionTopic = await LLMWrapper(requestPrompt);
+            const requestPrompt = `${prompt}\n\nHere is the description: \n\n${consolidatedDescriptionText}`;
+            const petitionTopic = await LLMWrapper(requestPrompt);
 
-        return petitionTopic;
+            return petitionTopic;
+        } else {
+            return "dummy topic";
+        }
     }
 }
 
 async function main(outputPath, savedPetitionTopicsPath = null) {
-
     let savedPetitionTopics = {};
 
     if (savedPetitionTopicsPath) {
@@ -114,6 +117,8 @@ async function main(outputPath, savedPetitionTopicsPath = null) {
         fs.writeFileSync(outputPath, JSON.stringify(topicsByPetition, null, 2), 'utf-8');
         console.log(`Processed petition ${petitionID}: ${petitionTopic}`);
     }
+    console.log("All petitions processed.");
+    progressBar.stop();
 }
 
 export { main };
