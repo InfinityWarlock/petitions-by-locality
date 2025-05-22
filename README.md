@@ -10,8 +10,9 @@ This is a WIP project.
     - GEMINI_API_KEY - your API key 
     - GEMINI_MODEL_CODE - the code for the model you want to use 
     - GEMINI_RATE_LIMIT - a rate limit you want to use. This is per minute. 
-4. In the root of the repository, run: `$ node run_me.js`. 
-5. Open index.html in your browser and select `data/constituencies_data.json`. This process can 100% be improved, but it does work! 
+4. In the root of the repository, run `$ scripts/fetch_data.js` to fetch the data.
+    - This should be run on a chron job / regular basis to keep the data updated. I suggest this is better than doing direct requests from every time to keep the load on the Parliament site down. 
+5.  Run `$node app.js` and navigate to `localhost:3000`. 
 
 ## TODOs:
 
