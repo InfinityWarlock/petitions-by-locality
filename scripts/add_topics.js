@@ -123,6 +123,6 @@ async function main(outputPath, savedPetitionTopicsPath = null) {
 
 export { main };
 
-main("data/topics_by_petition.json", "data/SAVED_topics_by_petition.json");
+// main("data/topics_by_petition.json", "data/SAVED_topics_by_petition.json");
 
 // console.log(loadSavedPetitionTopics('./data/SAVED_topics_by_petition.json'));

@@ -1,87 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Petitioners by Locality</title>
-  <link rel="stylesheet" href="styles/index.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Petitioners by Locality</title>
+    <link rel="stylesheet" href="styles/index.css" />
 </head>
 <body>
-  <h1>Petitioners by Locality</h1>
-  <p>
-    <button id="loadDataBtn" class="control load-data-btn">Load Data</button>
-  </p>
+    <h1>Petitioners by Locality</h1>
+    <p>
+        <button id="loadDataBtn" class="control load-data-btn">Load Data</button>
+    </p>
 
-  <div class="controls-container" id="controlsContainer" style="display:none;">
-    <select id="constituencySelect" class="control">
-      <option disabled selected>Choose a constituency</option>
-    </select>
-    <input type="text" id="filterName" placeholder="Filter by petition name" class="control">
-    <input type="number" id="filterSignatures" placeholder="Min signatures" class="control">
-    <label for="filterCreatedDate" class="control-label">Created after:</label>
-    <input type="date" id="filterCreatedDate" class="control">
-    <select id="filterSalienceCategory" class="control">
-      <option value="all">Local Salience: All</option>
-      <option value="more">More salient (>1)</option>
-      <option value="about">About as salient (=1)</option>
-      <option value="less">Less salient (<1)</option>
-    </select>
-    <select id="filterWrittenResponse" class="control">
-      <option value="all">Written response?: All</option>
-      <option value="yes">Written response?: Yes ✓</option>
-      <option value="no">Written response?: No ✗</option>
-    </select>
-    <select id="filterDebated" class="control">
-      <option value="all">Debated?: All</option>
-      <option value="yes">Debated?: Yes ✓</option>
-      <option value="no">Debated?: No ✗</option>
-    </select>
-    <button id="toggleDetailsBtn" class="toggle-details-btn export-btn control">📊 Show Details</button>
-    <button class="export-btn control" id="exportCsvBtn">⬇️ Export to CSV</button>
-  </div>
+    <div class="controls-container" id="controlsContainer" style="display:none;">
+        <select id="constituencySelect" class="control">
+            <option disabled selected>Choose a constituency</option>
+        </select>
+        <input type="text" id="filterName" placeholder="Filter by petition name" class="control">
+        <input type="number" id="filterSignatures" placeholder="Min signatures" class="control">
+        <label for="filterCreatedDate" class="control-label">Created after:</label>
+        <input type="date" id="filterCreatedDate" class="control">
+        <select id="filterSalienceCategory" class="control">
+            <option value="all">Local Salience: All</option>
+            <option value="more">More salient (>1)</option>
+            <option value="about">About as salient (=1)</option>
+            <option value="less">Less salient (<1)</option>
+        </select>
+        <select id="filterWrittenResponse" class="control">
+            <option value="all">Written response?: All</option>
+            <option value="yes">Written response?: Yes ✓</option>
+            <option value="no">Written response?: No ✗</option>
+        </select>
+        <select id="filterDebated" class="control">
+            <option value="all">Debated?: All</option>
+            <option value="yes">Debated?: Yes ✓</option>
+            <option value="no">Debated?: No ✗</option>
+        </select>
+        <div class="custom-select-container control" id="topicSelectContainer">
+            <input type="text" id="filterTopicSearch" placeholder="Search Topic..." class="custom-select-input" data-selected-value="all">
+            <div class="custom-select-arrow">▼</div>
+            <ul id="filterTopicOptions" class="custom-select-options">
+                <li data-value="all">Topic: All</li>
+                </ul>
+        </div>
+        <button id="toggleDetailsBtn" class="toggle-details-btn export-btn control">📊 Show Details</button>
+        <button class="export-btn control" id="exportCsvBtn">⬇️ Export to CSV</button>
+    </div>
 
-<table id="dataTable">
-  <colgroup id="overview-group" class="overview-group">
-    <col /><col /><col /><col /></colgroup>
-  <colgroup id="uk-wide-info-group" class="uk-wide-info-group">
-    <col class="uk-wide-info-col" /><col class="uk-wide-info-col" /></colgroup>
-  <colgroup id="response-group" class="response-group">
-    <col class="response-col" /><col class="response-col" /></colgroup>
-  <colgroup id="details-group" class="details-group">
-    <col class="details-col" /><col class="details-col" /></colgroup>
-  <thead>
-    <tr>
-      <th colspan="4" class="colgroup-header">Overview</th>
-      <th colspan="2" class="colgroup-header uk-wide-info-col uk-wide-info-header">UK-wide Info</th>
-      <th colspan="2" class="colgroup-header response-col response-header">Response</th>
-      <th colspan="2" class="colgroup-header details-col details-header">Details</th>
-    </tr>
-    <tr>
-      <th data-sort="text">Petition</th>
-      <th id="countHeader" data-sort="number">Signatures</th>
-      <th data-sort="salience">Local Salience</th>
-      <th data-sort="number">Salience Ratio</th>
-      <th class="uk-wide-info-col" data-sort="number">UK Total</th>
-      <th class="uk-wide-info-col" data-sort="text">State</th>
-      <th class="response-col">Written response?</th>
-      <th class="response-col">Debated?</th>
-      <th class="details-col" data-sort="date">Created</th>
-      <th class="details-col"></th>
-    </tr>
-  </thead>
-  <tbody>
-  </tbody>
-</table>
+    <table id="dataTable">
+        <colgroup id="overview-group" class="overview-group">
+            <col /><col /><col /><col /></colgroup>
+        <colgroup id="uk-wide-info-group" class="uk-wide-info-group">
+            <col class="uk-wide-info-col topic-col" /><col class="uk-wide-info-col" /><col class="uk-wide-info-col" /></colgroup>
+        <colgroup id="response-group" class="response-group">
+            <col class="response-col" /><col class="response-col" /></colgroup>
+        <colgroup id="details-group" class="details-group">
+            <col class="details-col" /><col class="details-col" /></colgroup>
+        <thead>
+            <tr>
+                <th colspan="4" class="colgroup-header">Overview</th>
+                <th colspan="3" class="colgroup-header uk-wide-info-col uk-wide-info-header">UK-wide Info</th>
+                <th colspan="2" class="colgroup-header response-col response-header">Response</th>
+                <th colspan="2" class="colgroup-header details-col details-header">Details</th>
+            </tr>
+            <tr>
+                <th data-sort="text">Petition</th>
+                <th id="countHeader" data-sort="number">Signatures</th>
+                <th data-sort="salience">Local Salience</th>
+                <th data-sort="number">Salience Ratio</th>
+                <th class="uk-wide-info-col topic-col">Topic</th> <th class="uk-wide-info-col" data-sort="number">UK Total</th>
+                <th class="uk-wide-info-col" data-sort="text">State</th>
+                <th class="response-col">Written response?</th>
+                <th class="response-col">Debated?</th>
+                <th class="details-col" data-sort="date">Created</th>
+                <th class="details-col"></th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
 
-  <footer>
-    Contains public sector information licensed under the Open Government Licence v3.0.
-  </footer>
+    <footer>
+        Contains public sector information licensed under the Open Government Licence v3.0.
+    </footer>
 
-  <div id="loadingOverlay" class="loading-overlay" style="display: none;">
-    <div class="spinner"></div>
-    <p>Loading data...</p>
-  </div>
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="spinner"></div>
+        <p>Loading data...</p>
+    </div>
 
-  <script src="scripts/index.js"></script>
+    <script src="scripts/index.js"></script>
 </body>
 </html>

@@ -1,57 +1,57 @@
 body {
-  font-family: system-ui, sans-serif;
-  margin: 0 auto;
-  padding: 2rem;
-  background-color: #f9f9f9;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
-  max-width: 1200px;
-  box-sizing: border-box;
+    font-family: system-ui, sans-serif;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    max-width: 1320px; /* Increased by 10% from 1200px (1200 * 1.10 = 1320) */
+    box-sizing: border-box;
 }
 
 h1 {
-  margin-bottom: 1rem;
+    margin-bottom: 1rem;
 }
 
 /* Modernized control styling */
 .controls-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem; /* Increased gap for better spacing */
-  margin-bottom: 1.5rem; /* More space below controls */
-  padding: 1rem;
-  background-color: #ffffff;
-  border-radius: 10px; /* Slightly more rounded corners */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* More prominent shadow */
-  align-items: center;
-  justify-content: center; /* Center controls horizontally */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem; /* Increased gap for better spacing */
+    margin-bottom: 1.5rem; /* More space below controls */
+    padding: 1rem;
+    background-color: #ffffff;
+    border-radius: 10px; /* Slightly more rounded corners */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* More prominent shadow */
+    align-items: center;
+    justify-content: center; /* Center controls horizontally */
 }
 
 .control {
-  padding: 0.75rem 1rem; /* Increased padding for inputs/selects */
-  font-size: 0.95rem; /* Slightly larger font */
-  border: 1px solid #d1d5db; /* Lighter, more modern border */
-  border-radius: 8px; /* Consistent border-radius */
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05); /* Subtle inner shadow */
-  transition: all 0.2s ease-in-out; /* Smooth transitions */
-  flex-grow: 1; /* Allow controls to grow */
-  max-width: 250px; /* Limit max width for individual controls */
+    padding: 0.75rem 1rem; /* Increased padding for inputs/selects */
+    font-size: 0.95rem; /* Slightly larger font */
+    border: 1px solid #d1d5db; /* Lighter, more modern border */
+    border-radius: 8px; /* Consistent border-radius */
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05); /* Subtle inner shadow */
+    transition: all 0.2s ease-in-out; /* Smooth transitions */
+    flex-grow: 1; /* Allow controls to grow */
+    max-width: 250px; /* Limit max width for individual controls */
 }
 
 .control:focus {
-  outline: none;
-  border-color: #6366f1; /* Tailwind indigo-500 for focus */
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25); /* Focus ring */
+    outline: none;
+    border-color: #6366f1; /* Tailwind indigo-500 for focus */
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25); /* Focus ring */
 }
 
 /* Specific styling for labels */
 .control-label {
-  font-size: 0.95rem;
-  color: #374151; /* Darker text for labels */
-  font-weight: 500;
-  white-space: nowrap; /* Prevent wrapping */
+    font-size: 0.95rem;
+    color: #374151; /* Darker text for labels */
+    font-weight: 500;
+    white-space: nowrap; /* Prevent wrapping */
 }
 
 /* Styling for buttons */
@@ -59,73 +59,73 @@ h1 {
 .toggle-details-btn,
 .show-info-btn,
 .load-data-btn { /* Added .load-data-btn here */
-  font-size: 0.9rem; /* Slightly smaller font for less chunkiness */
-  padding: 0.5rem 1rem; /* Reduced padding for less chunkiness */
-  border-radius: 8px; /* Consistent rounded corners */
-  cursor: pointer;
-  font-weight: 600; /* Bolder text */
-  transition: all 0.2s ease-in-out;
-  box-shadow: none; /* Removed box-shadow */
+    font-size: 0.9rem; /* Slightly smaller font for less chunkiness */
+    padding: 0.5rem 1rem; /* Reduced padding for less chunkiness */
+    border-radius: 8px; /* Consistent rounded corners */
+    cursor: pointer;
+    font-weight: 600; /* Bolder text */
+    transition: all 0.2s ease-in-out;
+    box-shadow: none; /* Removed box-shadow */
 }
 
 .export-btn,
 .toggle-details-btn {
-  background-color: transparent; /* No background color */
-  color: #6366f1; /* Primary color for text */
-  border: 1px solid #6366f1; /* Border in primary color */
+    background-color: transparent; /* No background color */
+    color: #6366f1; /* Primary color for text */
+    border: 1px solid #6366f1; /* Border in primary color */
 }
 
 .export-btn:hover,
 .toggle-details-btn:hover {
-  background-color: #e0e7ff; /* Light background on hover */
-  border-color: #4f46e5; /* Darker indigo on hover */
-  color: #4f46e5;
-  box-shadow: none; /* Ensure no shadow on hover */
+    background-color: #e0e7ff; /* Light background on hover */
+    border-color: #4f46e5; /* Darker indigo on hover */
+    color: #4f46e5;
+    box-shadow: none; /* Ensure no shadow on hover */
 }
 
 /* New style for the load data button */
 .load-data-btn {
-  background-color: #6366f1; /* Primary color for background */
-  color: white; /* White text */
-  border: 1px solid #6366f1; /* Border in primary color */
-  margin-bottom: 1rem; /* Add some space below the button */
+    background-color: #6366f1; /* Primary color for background */
+    color: white; /* White text */
+    border: 1px solid #6366f1; /* Border in primary color */
+    margin-bottom: 1rem; /* Add some space below the button */
 }
 
 .load-data-btn:hover {
-  background-color: #4f46e5; /* Darker indigo on hover */
-  border-color: #4f46e5;
+    background-color: #4f46e5; /* Darker indigo on hover */
+    border-color: #4f46e5;
 }
 
 /* Adjust margin for toggle button if it's next to other controls */
 .toggle-details-btn {
-  margin-left: 0; /* Resetting previous margin */
+    margin-left: 0; /* Resetting previous margin */
 }
 
 /* Specific styling for file input to prevent excessive height */
 /* This rule is now effectively removed as file input is gone */
 /* input[type="file"].control {
-  padding-top: 0.4rem;
-  padding-bottom: 0.4rem;
-  height: auto;
-  display: flex;
-  align-items: center;
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+    height: auto;
+    display: flex;
+    align-items: center;
 } */
 
 
 table {
-  width: 100%; /* Make table fill available width */
-  max-width: 100%; /* Constrain by parent's max-width (body's 1200px) */
-  border-collapse: collapse; /* This ensures default cell borders are used */
-  background-color: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  overflow: hidden;
-  table-layout: fixed; /* Added for better column width control */
+    width: 100%; /* Make table fill available width */
+    max-width: 100%; /* Constrain by parent's max-width (body's 1320px) */
+    border-collapse: collapse; /* This ensures default cell borders are used */
+    background-color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    table-layout: fixed; /* Added for better column width control */
 }
 
 /* Column group background colors */
 .overview-group col {
-  background-color: #ffffff;
+    background-color: #ffffff;
 }
 
 /* Define widths for all columns when all are visible */
@@ -137,11 +137,13 @@ table {
 /* Hide the old salience group as it's no longer needed */
 .salience-group,
 .salience-value-col {
-  display: none;
+    display: none;
 }
 
-.uk-wide-info-group col:first-child { width: 9%; } /* UK Total */
-.uk-wide-info-group col:nth-child(2) { width: 9%; } /* State */
+/* Adjusted for new Topic column */
+.uk-wide-info-group col:first-child { width: 9%; } /* Topic */
+.uk-wide-info-group col:nth-child(2) { width: 9%; } /* UK Total */
+.uk-wide-info-group col:nth-child(3) { width: 9%; } /* State */
 
 .response-group col:first-child { width: 9%; } /* Written response? */
 .response-group col:nth-child(2) { width: 9%; } /* Debated? */
@@ -157,7 +159,7 @@ table:not(.show-details) .response-col,
 table:not(.show-details) .response-header,
 table:not(.show-details) .details-col,
 table:not(.show-details) .details-header {
-  display: none;
+    display: none;
 }
 
 /* When .show-details is NOT active, adjust overview columns to fill space */
@@ -169,64 +171,64 @@ table:not(.show-details) .overview-group col:nth-child(4) { width: 20%; } /* Act
 
 th,
 td {
-  padding: 0.75rem 1rem;
-  text-align: left;
-  border: 1px solid #e0e0e0; /* Softer border color for all cell borders */
-  word-wrap: break-word; /* Ensure long text wraps */
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border: 1px solid #e0e0e0; /* Softer border color for all cell borders */
+    word-wrap: break-word; /* Ensure long text wraps */
 }
 
 th {
-  background-color: #f1f1f1;
-  font-weight: bold;
-  cursor: pointer;
-  user-select: none;
+    background-color: #f1f1f1;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
 }
 
 th:hover {
-  background-color: #e5e5e5;
+    background-color: #e5e5e5;
 }
 
 /* Modified to only apply to sortable columns */
 th[data-sort]::after {
-  content: '↕️';
-  opacity: 0.2;
-  margin-left: 5px;
+    content: '↕️';
+    opacity: 0.2;
+    margin-left: 5px;
 }
 
 th[data-sort][data-sort-direction="asc"]::after {
-  content: '↑';
-  opacity: 1;
+    content: '↑';
+    opacity: 1;
 }
 
 th[data-sort][data-sort-direction="desc"]::after {
-  content: '↓';
-  opacity: 1;
+    content: '↓';
+    opacity: 1;
 }
 
 /* Column group headers */
 .colgroup-header {
-  text-align: center;
-  background-color: #e5e5e5;
-  font-weight: bold;
-  padding: 0.5rem;
-  border: 1px solid #e0e0e0; /* Apply softened border to group headers too */
+    text-align: center;
+    background-color: #e5e5e5;
+    font-weight: bold;
+    padding: 0.5rem;
+    border: 1px solid #e0e0e0; /* Apply softened border to group headers too */
 }
 
 /* These headers are now controlled by the table:not(.show-details) rule */
 .colgroup-header.details-col,
 .colgroup-header.uk-wide-info-col,
 .colgroup-header.response-col {
-  display: none; /* Hidden by default, shown by .show-details */
+    display: none; /* Hidden by default, shown by .show-details */
 }
 
 .show-details .colgroup-header.details-col,
 .show-details .colgroup-header.uk-wide-info-col,
 .show-details .colgroup-header.response-col {
-  display: table-cell; /* Visible when details are shown */
+    display: table-cell; /* Visible when details are shown */
 }
 
 tr:nth-child(even) {
-  background-color: #f6f6f6;
+    background-color: #f6f6f6;
 }
 
 /* Detail columns and cells (hidden by default) */
@@ -235,8 +237,9 @@ tr:nth-child(even) {
 .uk-wide-info-col,
 .uk-wide-info-cell,
 .response-col,
-.response-cell {
-  display: none;
+.response-cell,
+.topic-col { /* Include topic-col */
+    display: none;
 }
 
 .show-details .details-col,
@@ -244,291 +247,369 @@ tr:nth-child(even) {
 .show-details .uk-wide-info-col,
 .show-details .uk-wide-info-cell,
 .show-details .response-col,
-.show-details .response-cell {
-  display: table-cell; /* Visible when details are shown */
+.show-details .response-cell,
+.show-details .topic-col { /* Include topic-col */
+    display: table-cell; /* Visible when details are shown */
 }
 
 .toggle-btn-cell {
-  text-align: right;
+    text-align: right;
 }
 
 /* Styles for the new "Show Info" button */
 .show-info-btn {
-  background-color: transparent; /* No background color */
-  color: #007bff; /* Primary button color for text */
-  border: 1px solid #007bff; /* Border in primary color */
-  box-shadow: none; /* Removed box-shadow */
+    background-color: transparent; /* No background color */
+    color: #007bff; /* Primary button color for text */
+    border: 1px solid #007bff; /* Border in primary color */
+    box-shadow: none; /* Removed box-shadow */
 }
 
 .show-info-btn:hover {
-  background-color: #e6f0ff; /* Light background on hover */
-  color: #0056b3;
+    background-color: #e6f0ff; /* Light background on hover */
+    color: #0056b3;
 }
 
 /* Styles for the salience categories */
 .salience-category-cell {
-  text-align: center;
-  font-size: 0.85rem; /* Slightly smaller text */
-  padding: 0.3rem 0.5rem; /* Padding for the box effect */
-  border-radius: 4px; /* Rounded corners for the box */
-  display: inline-block; /* To make padding/border work like a box */
-  min-width: 80px; /* Ensure consistent width */
+    text-align: center;
+    font-size: 0.85rem; /* Slightly smaller text */
+    padding: 0.3rem 0.5rem; /* Padding for the box effect */
+    border-radius: 4px; /* Rounded corners for the box */
+    display: inline-block; /* To make padding/border work like a box */
+    min-width: 80px; /* Ensure consistent width */
 }
 
 .more-salient {
-  background-color: #e6ffec; /* Light green */
-  color: #2da44e; /* Dark green text */
-  border: 1px solid #2da44e; /* Green border */
+    background-color: #e6ffec; /* Light green */
+    color: #2da44e; /* Dark green text */
+    border: 1px solid #2da44e; /* Green border */
 }
 
 .about-salient {
-  background-color: #f0f0f0; /* Light grey */
-  color: #555; /* Dark grey text */
-  border: 1px solid #ccc; /* Grey border */
+    background-color: #f0f0f0; /* Light grey */
+    color: #555; /* Dark grey text */
+    border: 1px solid #ccc; /* Grey border */
 }
 
 .less-salient {
-  background-color: #ffebe9; /* Light red */
-  color: #cf222e; /* Dark red text */
-  border: 1px solid #cf222e; /* Red border */
+    background-color: #ffebe9; /* Light red */
+    color: #cf222e; /* Dark red text */
+    border: 1px solid #cf222e; /* Red border */
 }
 
 /* New style for the salience ratio cell */
 .salience-ratio-cell {
-  font-size: 0.85rem; /* Consistent smaller text */
-  text-align: center;
+    font-size: 0.85rem; /* Consistent smaller text */
+    text-align: center;
 }
 
 /* Styles for the expanded petition details row */
 .petition-details-row td {
-  padding: 0 !important;
-  width: auto !important; /* Let the colspan determine the width */
-  display: table-cell !important; /* Ensure it behaves like a table cell */
+    padding: 0 !important;
+    width: auto !important; /* Let the colspan determine the width */
+    display: table-cell !important; /* Ensure it behaves like a table cell */
 }
 
 /* NEW: Grid container for the detail boxes */
 .petition-details-grid-container {
-  padding: 1.5rem;
-  font-size: 0.95rem;
-  line-height: 1.6;
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* Two columns for box one and box two */
-  grid-template-rows: auto auto; /* Two rows: first for boxes 1 & 2, second for box 3 */
-  gap: 1.5rem; /* Gap between the boxes */
-  width: 100%;
-  box-sizing: border-box;
-  /* Explicitly define grid areas for robust layout */
-  grid-template-areas:
-    "petition-box response-box"
-    "missing-box missing-box";
+    padding: 1.5rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two columns for box one and box two */
+    grid-template-rows: auto auto; /* Two rows: first for boxes 1 & 2, second for box 3 */
+    gap: 1.5rem; /* Gap between the boxes */
+    width: 100%;
+    box-sizing: border-box;
+    /* Explicitly define grid areas for robust layout */
+    grid-template-areas:
+        "petition-box response-box"
+        "missing-box missing-box";
 }
 
 .detail-box {
-  background-color: #ffffff;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem; /* Space between detail items within a section */
+    background-color: #ffffff;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem; /* Space between detail items within a section */
 }
 
 /* Assign grid areas to the specific boxes */
 .petition-details-grid-container > .detail-box:nth-child(1) { /* Petition Details box */
-  grid-area: petition-box;
+    grid-area: petition-box;
 }
 
 .petition-details-grid-container > .detail-box:nth-child(2) { /* Response & Debate box */
-  grid-area: response-box;
+    grid-area: response-box;
 }
 
 /* NEW: Styling for the full-width missing info box */
 .missing-info-box {
-  grid-area: missing-box; /* Assign to the missing-box area */
-  background-color: #fff3cd; /* Light yellow background */
-  border: 1px solid #ffeeba;
-  border-radius: 8px;
-  padding: 1rem;
-  margin-top: 0; /* No top margin as gap handles it */
-  color: #664d03; /* Darker text for contrast */
-  font-size: 0.9rem;
-  display: flex; /* Use flex for internal layout */
-  flex-direction: column;
-  gap: 0.5rem;
+    grid-area: missing-box; /* Assign to the missing-box area */
+    background-color: #fff3cd; /* Light yellow background */
+    border: 1px solid #ffeeba;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 0; /* No top margin as gap handles it */
+    color: #664d03; /* Darker text for contrast */
+    font-size: 0.9rem;
+    display: flex; /* Use flex for internal layout */
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
 .missing-info-box strong {
-  font-weight: 700;
-  margin-right: 0.5rem;
-  display: block; /* Ensure strong takes its own line */
+    font-weight: 700;
+    margin-right: 0.5rem;
+    display: block; /* Ensure strong takes its own line */
 }
 
 .detail-box strong {
-  font-size: 1.05rem; /* Slightly larger heading for sections */
-  color: #333;
-  margin-bottom: 0.5rem;
-  display: block;
+    font-size: 1.05rem; /* Slightly larger heading for sections */
+    color: #333;
+    margin-bottom: 0.5rem;
+    display: block;
 }
 
 .detail-item {
-  display: flex;
-  flex-direction: column; /* Stack label and value */
-  margin-bottom: 0.5rem; /* Space between detail items */
+    display: flex;
+    flex-direction: column; /* Stack label and value */
+    margin-bottom: 0.5rem; /* Space between detail items */
 }
 
 .detail-item strong {
-  font-size: 0.9rem; /* Smaller font for individual labels */
-  color: #555;
-  margin-bottom: 0.2rem; /* Closer to the value */
-  display: block; /* Ensure it takes its own line */
+    font-size: 0.9rem; /* Smaller font for individual labels */
+    color: #555;
+    margin-bottom: 0.2rem; /* Closer to the value */
+    display: block; /* Ensure it takes its own line */
 }
 
 .detail-item p {
-  margin: 0; /* Remove default paragraph margin */
-  padding: 0;
-  color: #333;
+    margin: 0; /* Remove default paragraph margin */
+    padding: 0;
+    color: #333;
 }
 
 .detail-item a {
-  color: #007bff;
-  text-decoration: underline;
+    color: #007bff;
+    text-decoration: underline;
 }
 
 .detail-box ul {
-  list-style: disc inside; /* Bullet points for lists */
-  margin: 0.5rem 0 0 1rem;
-  padding: 0;
+    list-style: disc inside; /* Bullet points for lists */
+    margin: 0.5rem 0 0 1rem;
+    padding: 0;
 }
 
 .detail-box li {
-  margin-bottom: 0.2rem;
-  color: #333;
+    margin-bottom: 0.2rem;
+    color: #333;
 }
 
 footer {
-  margin-top: auto;
-  padding: 1rem;
-  font-size: 0.85rem;
-  color: #666;
-  text-align: center;
+    margin-top: auto;
+    padding: 1rem;
+    font-size: 0.85rem;
+    color: #666;
+    text-align: center;
 }
 
 /* Loading Overlay Styles */
 .loading-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999; /* Ensure it's on top of other content */
-  font-size: 1.2rem;
-  color: #333;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Ensure it's on top of other content */
+    font-size: 1.2rem;
+    color: #333;
 }
 
 .spinner {
-  border: 8px solid #f3f3f3; /* Light grey */
-  border-top: 8px solid #6366f1; /* Primary color */
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  animation: spin 1s linear infinite;
-  margin-bottom: 15px;
+    border: 8px solid #f3f3f3; /* Light grey */
+    border-top: 8px solid #6366f1; /* Primary color */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* NEW: Custom Select / Searchable Dropdown Styles */
+.custom-select-container {
+    position: relative;
+    display: inline-block;
+    width: auto; /* Adjust as needed */
+    flex-grow: 1;
+    max-width: 250px;
+    border: none; /* Removed the outer border */
+    box-shadow: none; /* Removed the box-shadow inherited from .control */
+}
+
+.custom-select-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.custom-select-input:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+}
+
+.custom-select-arrow {
+    display: none; /* Removed the dropdown arrow */
+}
+
+.custom-select-options {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    background-color: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+    z-index: 999; /* Ensure it's above other content */
+    display: none; /* Hidden by default */
+}
+
+.custom-select-options li {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.custom-select-options li:hover {
+    background-color: #f0f0f0;
 }
 
 
 @media (max-width: 900px) { /* Adjusted breakpoint for grid layout change */
-  .petition-details-grid-container {
-    grid-template-columns: 1fr; /* Single column for all boxes on smaller screens */
-    /* Stack grid areas vertically on smaller screens */
-    grid-template-areas:
-      "petition-box"
-      "response-box"
-      "missing-box";
-  }
+    .petition-details-grid-container {
+        grid-template-columns: 1fr; /* Single column for all boxes on smaller screens */
+        /* Stack grid areas vertically on smaller screens */
+        grid-template-areas:
+            "petition-box"
+            "response-box"
+            "missing-box";
+    }
 }
 
 @media (max-width: 600px) {
-  .controls-container {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+    .controls-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 
-  .control {
-    width: 100%; /* Full width on small screens */
-    max-width: none; /* Remove max-width constraint */
-  }
+    .control {
+        width: 100%; /* Full width on small screens */
+        max-width: none; /* Remove max-width constraint */
+    }
 
-  table,
-  thead,
-  tbody,
-  th,
-  td,
-  tr {
-    display: block;
-  }
+    /* Adjust custom select for mobile */
+    .custom-select-container {
+        width: 100%;
+        max-width: none;
+    }
 
-  th {
-    display: none;
-  }
+    table,
+    thead,
+    tbody,
+    th,
+    td,
+    tr {
+        display: block;
+    }
 
-  td {
-    position: relative;
-    padding-left: 50%;
-  }
+    th {
+        display: none;
+    }
 
-  td::before {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 50%;
-    padding-left: 1rem;
-    font-weight: bold;
-    white-space: nowrap;
-  }
+    td {
+        position: relative;
+        padding-left: 50%;
+    }
 
-  tr {
-    margin-bottom: 1rem;
-    border-bottom: 2px solid #ccc;
-  }
+    td::before {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 50%;
+        padding-left: 1rem;
+        font-weight: bold;
+        white-space: nowrap;
+    }
 
-  .toggle-btn-cell {
-    text-align: left;
-    padding-top: 1rem;
-  }
+    /* Specific labels for mobile view */
+    td:nth-of-type(1)::before { content: 'Petition:'; }
+    td:nth-of-type(2)::before { content: 'Signatures:'; }
+    td:nth-of-type(3)::before { content: 'Local Salience:'; }
+    td:nth-of-type(4)::before { content: 'Salience Ratio:'; }
+    td:nth-of-type(5)::before { content: 'Topic:'; } /* New label for Topic */
+    td:nth-of-type(6)::before { content: 'UK Total:'; }
+    td:nth-of-type(7)::before { content: 'State:'; }
+    td:nth-of-type(8)::before { content: 'Written response?:'; }
+    td:nth-of-type(9)::before { content: 'Debated?:'; }
+    td:nth-of-type(10)::before { content: 'Created:'; }
+    td:nth-of-type(11)::before { content: ''; } /* For the details button */
 
-  /* Remove all vertical lines in mobile view */
-  .show-details td:nth-child(2),
-  .show-details td:nth-child(4),
-  .show-details th:nth-child(2),
-  .show-details th:nth-child(4),
-  .show-details .salience-col:first-child th {
-    border-left: none;
-  }
 
-  /* Remove colgroup borders in mobile view */
-  table colgroup:nth-of-type(n+2) {
-    border-right: none;
-  }
+    tr {
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #ccc;
+    }
 
-  /* Ensure expanded details row behaves correctly in mobile */
-  .petition-details-row {
-    display: block !important; /* Override inline style for mobile if needed */
-    width: 100%;
-    box-sizing: border-box;
-  }
+    .toggle-btn-cell {
+        text-align: left;
+        padding-top: 1rem;
+    }
 
-  /* The grid container will already handle single column on small screens */
-  .petition-details-grid-container {
-    padding-left: 1rem; /* Adjust padding for mobile */
-  }
-}
+    /* Remove all vertical lines in mobile view */
+    .show-details td:nth-child(2),
+    .show-details td:nth-child(4),
+    .show-details th:nth-child(2),
+    .show-details th:nth-child(4),
+    .show-details .salience-col:first-child th {
+        border-left: none;
+    }
+
+    /* Remove colgroup borders in mobile view */
+    table colgroup:nth-of-type(n+2) {
+        border-right: none;
+    }
+
+    /* Ensure expanded details row behaves correctly in mobile */
+    .petition-details-row {
+        display: block !important; /* Override inline style for mobile if needed */
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* The grid container will already handle single column on small screens */
+    .petition-details-grid-container {
+        padding-left: 1rem; /* Adjust padding for mobile */
+    }

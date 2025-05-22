@@ -17,10 +17,6 @@ try {
     console.error('Error:', err);
 }
 
-const rawPetitionsData = petitionsDataContainer.rawPetitionsData.reduce((acc, petition) => {
-  acc[petition.id] = petition;
-  return acc;
-}, {});
 
 // Absolute path to the 'views' directory
 const viewsPath = path.join(__dirname, 'views');
@@ -35,6 +31,10 @@ app.get('/', (req, res) => {
 
 app.get('/constituenciesData', (req, res) => { 
     res.sendFile(path.join(__dirname, 'data', 'constituencies_data.json'));
+});
+
+app.get('/topicsData', (req, res) => { 
+    res.sendFile(path.join(__dirname, 'data', 'topics_by_petition.json'));
 });
 
 // This is commented out because it is not needed - instead I just have the "download latest data button"
