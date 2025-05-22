@@ -4,8 +4,6 @@ import Bottleneck from 'bottleneck';
 import { GoogleGenAI } from "@google/genai";
 import cliProgress from 'cli-progress';
 
-
-
 dotenv.config();
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -25,7 +23,6 @@ async function makeGeminiRequest(prompt) {
         model: GEMINI_MODEL_CODE,
         contents: prompt
     });
-
     return response.text;
 }
 
@@ -42,34 +39,30 @@ function loadPetitions(file) {
     }
 }
 
-const LLMWrapper = limiter.wrap(async function(prompt) {
+function loadSavedPetitionTopics(filepath) {
+    try {
+        const rawData = fs.readFileSync(filepath, 'utf-8');
+        const petitionTopics = JSON.parse(rawData);
+        return petitionTopics;
+    } catch (err) {
+        console.error('Failed to load saved petition topics:', err.message);
+        return {};
+    }
+}
+
+const LLMWrapper = limiter.wrap(async function (prompt) {
     return await makeGeminiRequest(prompt);
 });
 
-async function extractTopic(consolidatedDescriptionText, savedPetitionsFilePath) {
-
-}
-
-async function main(output_path) {
-    let petitions = loadPetitions(filePath);
-    let counter = 0;
-    let topicsByPetition = {};
-
-    const progressBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
-    progressBar.start(Object.keys(petitions.rawPetitionsData).length, 0);
-
-    for (const key in Object.keys(petitions.rawPetitionsData)) {
-
-        counter += 1; 
-        
-        progressBar.update(counter);
-
+async function extractTopic(petition, savedPetitionsObject) {
+    if (petition.id in savedPetitionsObject) {
+        console.log(`Petition ${petition.id} already has a topic: ${savedPetitionsObject[petition.id]}`);
+        return savedPetitionsObject[petition.id];
+    } else {
         const consolidatedDescriptionText =
-            `Desired action:\n${petitions.rawPetitionsData[key].attributes.action}\n`
-            + `Background:\n${petitions.rawPetitionsData[key].attributes.background}\n`
-            + `Additional details:\n${petitions.rawPetitionsData[key].attributes.additional_details}\n`
-
-        const petitionID = petitions.rawPetitionsData[key].id;
+            `Desired action:\n${petition.attributes.action}\n` +
+            `Background:\n${petition.attributes.background}\n` +
+            `Additional details:\n${petition.attributes.additional_details}\n`;
 
         const prompt = `Your job is to extract the topic of a petition from the following description. If there is only one topic, return just the topic. For example, this petition has one topic: "Action:
 
@@ -82,16 +75,49 @@ Additional Details:
 It has transpired that the migrant hotels may stay open for at least the next 4 years. We want to see the migrant hotels shut down now and all illegal migrants housed in them deported immediately.
 Creator:
 
-Robert Barnes". The topic is "illegal immigration". If there are multiple topics, return them as a comma-separated list. You are operating in the UK context. Topics include (but are not limited to): NHS, illegal immigration, EU, cost of living, housing, education, environment, net zero, crime, police, energy, transport, defence, Gaza, foreign affairs, social care. But there might be others. Prefer to return one topic.`
-        const requestPrompt = `${prompt}\n\n. Here is the description: \n\n${consolidatedDescriptionText}`;
+Robert Barnes". The topic is "illegal immigration". If there are multiple topics, return them as a comma-separated list. You are operating in the UK context. Topics include (but are not limited to): NHS, illegal immigration, EU, cost of living, housing, education, environment, net zero, crime, police, energy, transport, defence, Gaza, foreign affairs, social care. But there might be others. Prefer to return one topic.`;
 
+        const requestPrompt = `${prompt}\n\nHere is the description: \n\n${consolidatedDescriptionText}`;
         const petitionTopic = await LLMWrapper(requestPrompt);
-        topicsByPetition[petitionID] = petitionTopic; 
 
-        // save topicsByPetition to file   
-        fs.writeFileSync(output_path, JSON.stringify(topicsByPetition, null, 2), 'utf-8');
+        return petitionTopic;
+    }
+}
+
+async function main(outputPath, savedPetitionTopicsPath = null) {
+
+    let savedPetitionTopics = {};
+
+    if (savedPetitionTopicsPath) {
+        savedPetitionTopics = loadSavedPetitionTopics(savedPetitionTopicsPath);
+    }
+
+    let petitions = loadPetitions(filePath);
+
+    let counter = 0;
+    let topicsByPetition = {};
+
+    const progressBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
+    progressBar.start(Object.keys(petitions.rawPetitionsData).length, 0);
+
+    for (const key in Object.keys(petitions.rawPetitionsData)) {
+        counter += 1;
+        progressBar.update(counter);
+
+        const petition = petitions.rawPetitionsData[key];
+        const petitionTopic = await extractTopic(petition, savedPetitionTopics);
+
+        const petitionID = petitions.rawPetitionsData[key].id;
+        topicsByPetition[petitionID] = petitionTopic;
+
+        // Save topicsByPetition to file
+        fs.writeFileSync(outputPath, JSON.stringify(topicsByPetition, null, 2), 'utf-8');
         console.log(`Processed petition ${petitionID}: ${petitionTopic}`);
     }
 }
 
-main("data/topics_by_petition.json");
+export { main };
+
+main("data/topics_by_petition.json", "data/SAVED_topics_by_petition.json");
+
+// console.log(loadSavedPetitionTopics('./data/SAVED_topics_by_petition.json'));

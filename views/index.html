@@ -8,9 +8,8 @@
 </head>
 <body>
   <h1>Petitioners by Locality</h1>
-  <p>Select the constituencies_data.json file here.</p>
   <p>
-  <input type="file" id="fileInput" accept=".json" class="control" />
+    <button id="loadDataBtn" class="control load-data-btn">Load Data</button>
   </p>
 
   <div class="controls-container" id="controlsContainer" style="display:none;">
@@ -77,6 +76,11 @@
   <footer>
     Contains public sector information licensed under the Open Government Licence v3.0.
   </footer>
+
+  <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+    <div class="spinner"></div>
+    <p>Loading data...</p>
+  </div>
 
   <script src="scripts/index.js"></script>
 </body>

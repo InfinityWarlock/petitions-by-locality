@@ -17,32 +17,37 @@ let currentSortDirection = "desc";
 // Created (data-sort index 6) -> cell 8
 const headerCellIndexMap = [0, 1, 2, 3, 4, 5, 8];
 
-document.getElementById('fileInput').addEventListener('change', function(event) {
-  const file = event.target.files[0];
-  if (!file) return;
+// Event listener for the new "Load Data" button
+document.getElementById('loadDataBtn').addEventListener('click', async function() {
+  const loadingOverlay = document.getElementById('loadingOverlay');
+  loadingOverlay.style.display = 'flex'; // Show loading overlay
 
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      const data = JSON.parse(e.target.result);
-      fullData = data;
-      signaturesByConstituency = data.signaturesByConstituency || {};
-      rawPetitionsData = data.rawPetitionsData || {};
-
-      if (Array.isArray(rawPetitionsData)) {
-        // Convert array of petitions to an object keyed by petition ID for easier lookup
-        rawPetitionsData = Object.fromEntries(rawPetitionsData.map(p => [p.id, p]));
-      }
-
-      populateConstituencySelector(Object.keys(signaturesByConstituency));
-      document.getElementById("controlsContainer").style.display = "flex";
-    } catch (err) {
-      // Using a custom message box instead of alert()
-      displayMessageBox("Error parsing JSON file. Please ensure it's a valid JSON structure.");
-      console.error(err);
+  try {
+    // Fetch data from the local API endpoint
+    const response = await fetch('http://localhost:3000/constituenciesData');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-  };
-  reader.readAsText(file);
+    const data = await response.json();
+
+    fullData = data;
+    signaturesByConstituency = data.signaturesByConstituency || {};
+    rawPetitionsData = data.rawPetitionsData || {};
+
+    if (Array.isArray(rawPetitionsData)) {
+      // Convert array of petitions to an object keyed by petition ID for easier lookup
+      rawPetitionsData = Object.fromEntries(rawPetitionsData.map(p => [p.id, p]));
+    }
+
+    populateConstituencySelector(Object.keys(signaturesByConstituency));
+    document.getElementById("controlsContainer").style.display = "flex";
+  } catch (err) {
+    // Using a custom message box instead of alert()
+    displayMessageBox(`Error loading data from API: ${err.message}. Please ensure the local server is running.`);
+    console.error("Error fetching data:", err);
+  } finally {
+    loadingOverlay.style.display = 'none'; // Hide loading overlay
+  }
 });
 
 /**
