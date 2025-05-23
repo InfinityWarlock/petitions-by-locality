@@ -15,12 +15,19 @@ This is a WIP project.
 5.  Run `$node app.js` and navigate to `localhost:3000`. 
 
 ## TODOs:
+- Complete AI topics functionality, using BES topics
+- Weight constituencies by population, not 1/650 (population might be population or registered voters)
 
-- Group petitions by topic (eg immigration, NHS) automatically. My suggestion: use an LLM to pull out topics from the descriptions of the petitions. 
-- Weight constituencies by population, not 1/650
-## Licence for the petitions data 
+## Acknowledgements / licences for data used
 
+### Petitions data
 Contains public sector information licensed under the Open Government Licence v3.0.
+
+### List of topics assigned to petitions 
+
+The list is manually pulled from [the topics page of the House of Commons Library](https://commonslibrary.parliament.uk/research/full-topic-list/). Two topics are removed: monthly economic indicators and economic indicators. 
+
+Contains Parliamentary information licensed under the [Open Parliament Licence v3.0](https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence/). 
 
 ## Screenshots
 

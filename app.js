@@ -1,12 +1,16 @@
-const express = require('express');
-const path = require('path');
-const fs = require('fs');
+import express from 'express';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
 
 const app = express();
 const port = 3000;
 
+// Get the directory name using import.meta.url for ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// Load the petitions data 
+// Load the petitions data
 const petitionsFilePath = path.join(__dirname, 'data', 'constituencies_data.json');
 let petitionsDataContainer = {};
 
@@ -16,7 +20,6 @@ try {
 } catch (err) {
     console.error('Error:', err);
 }
-
 
 // Absolute path to the 'views' directory
 const viewsPath = path.join(__dirname, 'views');
@@ -29,11 +32,11 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(viewsPath, 'index.html'));
 });
 
-app.get('/constituenciesData', (req, res) => { 
+app.get('/constituenciesData', (req, res) => {
     res.sendFile(path.join(__dirname, 'data', 'constituencies_data.json'));
 });
 
-app.get('/topicsData', (req, res) => { 
+app.get('/topicsData', (req, res) => {
     res.sendFile(path.join(__dirname, 'data', 'topics_by_petition.json'));
 });
 
@@ -46,7 +49,8 @@ app.get('/topicsData', (req, res) => {
 
 app.listen(port, () => {
     console.log(`
-Petitions by Locality running on port ${port}. 
+Petitions by Locality running on port ${port}.
 Contains public sector information licensed under the Open Government Licence v3.0.
+Contains Parliamentary information licensed under the Open Parliament Licence v3.0.
 `);
 });
