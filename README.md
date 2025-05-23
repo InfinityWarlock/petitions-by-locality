@@ -16,7 +16,15 @@ This is a WIP project.
 
 ## TODOs:
 - Weight constituencies by population, not 1/650 (population might be population or registered voters)
-- Implelement proper topics caching manually
+- Implelement proper topics caching non-manually 
+- Move on to AWS? 
+- Do things with the topics data 
+    - Topics dashboard ideas: which topics are popular where? (ie on a map)
+    - Click into a topic - what petitions have been created with this topic over time? 
+    - how salient is a given topic in your constituency 
+    - do topics vary by salience etc in different areas (I'm sure they do)
+    - other interesting questions?
+    - Parliamntary boundaries GeoJSON: https://www.data.gov.uk/dataset/90293fcf-9268-4a1a-be3d-d4a20d314604/westminster-parliamentary-constituencies-july-2024-names-and-codes-in-the-uk-v2
 
 ## Acknowledgements / licences for data used
 
@@ -28,6 +36,12 @@ Contains public sector information licensed under the Open Government Licence v3
 The list is manually pulled from [the topics page of the House of Commons Library](https://commonslibrary.parliament.uk/research/full-topic-list/). Two topics are removed: monthly economic indicators and economic indicators. 
 
 Contains Parliamentary information licensed under the [Open Parliament Licence v3.0](https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence/). 
+
+### Constituency boundaries 
+
+They are on [data.gov.uk](https://www.data.gov.uk/dataset/7165b3a0-a1f2-40ff-a8e0-cfc2a573be30/westminster-parliamentary-constituencies-july-2024-boundaries-uk-bgc). 
+
+Contains public sector information licensed under the Open Government Licence v3.0.
 
 ## Screenshots
 
