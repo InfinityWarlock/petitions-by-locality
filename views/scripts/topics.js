@@ -282,7 +282,7 @@ function updateTopicDetailsSection(titleText, type, name) {
       </ul>
     `;
 
-    topicDetailsLeftBottom.innerHTML = `<h3>Where have petitions about ${titleText} been signed??</h3>
+    topicDetailsLeftBottom.innerHTML = `<h3>Where have petitions about ${titleText} been signed?</h3>
     <div id="mapDiv"></div>`; 
     
     // Create the map 
@@ -365,7 +365,30 @@ function updateTopicDetailsSection(titleText, type, name) {
     }
 
     let geojsonLayer = L.geoJSON(window.constituencyBoundariesGeoJSON, {
-        style: styleFunc
+        style: styleFunc,
+        onEachFeature: function (feature, layer) {
+            const constituencyName = feature.properties.PCON24NM;
+            const signatureCount = signaturesInThisTopicByConstituency[constituencyName] || 0;
+            
+            // Add hover effect
+            layer.on('mouseover', function () {
+                this.setStyle({
+                    weight: 4,
+                    color: '#666',
+                    fillOpacity: 0.9
+                });
+            });
+            
+            layer.on('mouseout', function () {
+                geojsonLayer.resetStyle(this);
+            });
+            
+            // Add click popup
+            layer.on('click', function () { 
+                const popupContent = `<strong>${constituencyName}</strong><br>Signatures: ${signatureCount.toLocaleString()}<br><a onclick="switchToConstituency('${constituencyName}')" href="javascript:;">All petitions in ${constituencyName}</a>`;
+                layer.bindPopup(popupContent).openPopup();
+            });
+        }
     });
 
     geojsonLayer.addTo(map); 
@@ -704,6 +727,12 @@ async function initializeTopicView() {
   if (showAllTopicsBtn) {
     showAllTopicsBtn.addEventListener('click', resetIndividualChart);
   }
+}
+
+function switchToConstituency(constituencyName) {
+    showView('localityView'); // Switch to the locality view
+    document.getElementById('constituencySelect').value = constituencyName;
+    document.getElementById('constituencySelect').dispatchEvent(new Event('change')); // Trigger change event to load constituency data
 }
 
 // Ensure Chart.js is loaded before attempting to create charts
