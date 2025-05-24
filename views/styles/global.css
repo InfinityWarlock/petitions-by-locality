@@ -191,6 +191,55 @@ footer {
     100% { transform: rotate(360deg); }
 }
 
+/* Collapsible Section Styling (Moved from index.html) */
+.collapsible-section {
+    margin-bottom: 1.5em;
+}
+.collapsible-header {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 0.5em;
+}
+.collapsible-header h1 {
+    margin-right: 0.5em;
+    margin-bottom: 0; /* Override default h1 margin */
+}
+.collapse-icon {
+    width: 1em;
+    height: 1em;
+    border: 0.1em solid #666;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8em;
+    color: #666;
+    transition: transform 0.2s ease-in-out; /* Smooth transition for icon rotation */
+}
+.collapse-icon::before {
+    content: '+';
+}
+.collapsible-content {
+    /* Removed display: none; */
+    max-height: 0; /* Hidden by default using max-height */
+    overflow: hidden; /* Hides content that overflows max-height */
+    padding-left: 1em;
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out; /* Smooth transition for height and opacity */
+    opacity: 0; /* Start with content invisible */
+}
+.collapsible-header.open .collapse-icon::before {
+    content: '−';
+}
+.collapsible-header.open .collapse-icon {
+    transform: rotate(180deg); /* Rotate icon when open */
+}
+.collapsible-content.open {
+    /* max-height will be set dynamically by JS to scrollHeight */
+    opacity: 1; /* Make content visible */
+}
+
+
 /* Media Queries for Global Elements */
 @media (max-width: 900px) {
     .navbar {

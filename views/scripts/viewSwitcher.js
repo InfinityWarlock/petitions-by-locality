@@ -67,8 +67,61 @@ function displayMessageBox(message) {
     });
 }
 
+/**
+ * Sets up the collapsible functionality for sections within the 'aboutView'.
+ */
+function setupCollapsibleSections() {
+    const aboutView = document.getElementById('aboutView');
+    if (aboutView) {
+        const collapsibleHeaders = aboutView.querySelectorAll('.collapsible-header');
 
-// Event listener for DOMContentLoaded to set up initial view state
+        collapsibleHeaders.forEach(header => {
+            const content = header.nextElementSibling; // The content div is the next sibling
+
+            // Ensure content is initially collapsed
+            if (content) {
+                content.style.maxHeight = '0';
+                content.style.opacity = '0';
+            }
+
+            header.addEventListener('click', function() {
+                if (content) {
+                    this.classList.toggle('open'); // Toggle 'open' class on the header
+                    content.classList.toggle('open'); // Toggle 'open' class on the content
+
+                    if (content.classList.contains('open')) {
+                        // When opening:
+                        content.style.maxHeight = content.scrollHeight + "px"; // Set to actual scroll height for transition
+                        content.style.opacity = '1'; // Make content visible
+                        // After transition, set max-height to 'auto' to ensure all content is visible
+                        content.addEventListener('transitionend', function handler() {
+                            content.style.maxHeight = 'auto';
+                            content.removeEventListener('transitionend', handler);
+                        });
+                    } else {
+                        // When closing:
+                        content.style.maxHeight = content.scrollHeight + "px"; // Set current height before collapsing
+                        // Force a reflow to ensure the browser registers the height change before animating
+                        content.offsetWidth;
+                        content.style.maxHeight = "0"; // Collapse
+                        content.style.opacity = '0'; // Make content invisible
+                        // After transition, set display to 'none' for accessibility/performance
+                        content.addEventListener('transitionend', function handler() {
+                            // Only set display to none if it's actually collapsed
+                            if (!content.classList.contains('open')) {
+                                content.style.display = 'none';
+                            }
+                            content.removeEventListener('transitionend', handler);
+                        });
+                    }
+                }
+            });
+        });
+    }
+}
+
+
+// Event listener for DOMContentLoaded to set up initial view state and collapsible sections
 document.addEventListener('DOMContentLoaded', () => {
     // Hide all content views initially (localityView, topicView, aboutView)
     document.querySelectorAll('.content-view').forEach(view => {
@@ -100,4 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // Setup collapsible sections when the DOM is ready
+    setupCollapsibleSections();
 });
