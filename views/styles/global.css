@@ -1,0 +1,270 @@
+/* General Page Styling */
+body {
+    font-family: system-ui, sans-serif;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    max-width: 1320px; /* Increased by 10% from 1200px (1200 * 1.10 = 1320) */
+    box-sizing: border-box;
+}
+
+/* Navbar Styling */
+.navbar {
+    width: 100%;
+    background-color: #ffffff;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    margin-bottom: 2rem; /* Space below the navbar */
+    display: flex;
+    justify-content: space-between; /* Space wordmark and nav links */
+    align-items: center;
+    max-width: 1320px; /* Match body max-width */
+    box-sizing: border-box;
+}
+
+.navbar .wordmark {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #6366f1; /* Primary color */
+    letter-spacing: -0.5px;
+}
+
+.navbar nav {
+    flex-grow: 1; /* Allow nav to take available space */
+    display: flex;
+    justify-content: center; /* Center nav links */
+}
+
+.navbar .nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 2rem; /* Space links evenly */
+}
+
+.navbar .nav-link {
+    text-decoration: none;
+    color: #555;
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 0.5rem 0;
+    position: relative;
+    transition: color 0.2s ease-in-out;
+}
+
+.navbar .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 3px;
+    background-color: #6366f1;
+    transition: width 0.2s ease-in-out;
+}
+
+.navbar .nav-link:hover {
+    color: #6366f1;
+}
+
+.navbar .nav-link:hover::after {
+    width: 100%;
+}
+
+.navbar .nav-link.active {
+    color: #6366f1;
+}
+
+.navbar .nav-link.active::after {
+    width: 100%;
+}
+
+/* Styling for disabled navigation links */
+.nav-links.disabled .nav-link {
+    pointer-events: none; /* Disable clicks */
+    opacity: 0.5; /* Visually indicate disabled state */
+    cursor: not-allowed;
+}
+
+.nav-links.disabled .nav-link::after {
+    display: none; /* Hide hover effect when disabled */
+}
+
+
+/* Content View Styling */
+.content-view {
+    width: 100%;
+    flex-grow: 1; /* Allows content views to take available space */
+    display: none; /* Hidden by default, JS will show the active one */
+}
+
+/* Ensure the active view is displayed */
+.content-view.active {
+    display: block;
+}
+
+/* Initial Load Content Styling */
+.initial-load-content {
+    flex-grow: 1; /* Allows it to take available space and push footer down */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    flex-direction: column; /* For potential future content */
+}
+
+.large-centered-button {
+    font-size: 1.8rem; /* Much bigger font */
+    padding: 0.8rem 3rem; /* Reduced vertical padding, kept horizontal */
+    border-radius: 12px; /* Slightly more rounded */
+    background-color: #6366f1; /* Primary color */
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); /* More prominent shadow */
+    transition: all 0.3s ease-in-out;
+    width: 20%; /* Approximately 20% of container width */
+    min-width: 250px; /* Ensure it's not too small on tiny screens */
+    max-width: 400px; /* Prevent it from becoming too wide on very large screens */
+    height: 20vh; /* Approximately 20% of viewport height */
+    max-height: 150px; /* Cap the height to prevent it from being excessively tall */
+    display: flex; /* Use flex to center text inside button */
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.large-centered-button:hover {
+    background-color: #4f46e5;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px); /* Slight lift effect */
+}
+
+
+/* Footer Styling */
+footer {
+    margin-top: auto; /* Pushes footer to the bottom */
+    padding: 1rem;
+    font-size: 0.85rem;
+    color: #666;
+    text-align: center;
+    width: 100%;
+    max-width: 1320px; /* Match body max-width */
+    box-sizing: border-box;
+}
+
+/* Loading Overlay Styles */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Ensure it's on top of other content */
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.spinner {
+    border: 8px solid #f3f3f3; /* Light grey */
+    border-top: 8px solid #6366f1; /* Primary color */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Collapsible Section Styling (Moved from index.html) */
+.collapsible-section {
+    margin-bottom: 1.5em;
+}
+.collapsible-header {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 0.5em;
+}
+.collapsible-header h1 {
+    margin-right: 0.5em;
+    margin-bottom: 0; /* Override default h1 margin */
+}
+.collapse-icon {
+    width: 1em;
+    height: 1em;
+    border: 0.1em solid #666;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8em;
+    color: #666;
+    transition: transform 0.2s ease-in-out; /* Smooth transition for icon rotation */
+}
+.collapse-icon::before {
+    content: '+';
+}
+.collapsible-content {
+    /* Removed display: none; */
+    max-height: 0; /* Hidden by default using max-height */
+    overflow: hidden; /* Hides content that overflows max-height */
+    padding-left: 1em;
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out; /* Smooth transition for height and opacity */
+    opacity: 0; /* Start with content invisible */
+}
+.collapsible-header.open .collapse-icon::before {
+    content: '−';
+}
+.collapsible-header.open .collapse-icon {
+    transform: rotate(180deg); /* Rotate icon when open */
+}
+.collapsible-content.open {
+    /* max-height will be set dynamically by JS to scrollHeight */
+    opacity: 1; /* Make content visible */
+}
+
+
+/* Media Queries for Global Elements */
+@media (max-width: 900px) {
+    .navbar {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .navbar nav {
+        justify-content: space-around; /* Distribute links evenly when stacked */
+    }
+
+    .navbar .nav-links {
+        width: 100%;
+        gap: 0.5rem; /* Reduce gap for smaller screens */
+    }
+
+    .navbar .nav-link {
+        font-size: 1rem;
+    }
+
+    .large-centered-button {
+        font-size: 1.5rem;
+        padding: 0.8rem 2rem;
+        width: 80%; /* Take more width on smaller screens */
+        height: 15vh; /* Adjust height for smaller screens */
+    }
+}
