@@ -118,7 +118,7 @@ canvas {
 
 /* Style for the scrollable table container */
 .scrollable-table-container {
-    max-height: 300px; /* Set a maximum height for the scrollable area */
+    max-height: 700px; /* Set a maximum height for the scrollable area */
     overflow-y: auto; /* Enable vertical scrolling when content exceeds max-height */
     border: 1px solid #ddd; /* Optional: Add a border to delineate the scrollable area */
     border-radius: 8px;

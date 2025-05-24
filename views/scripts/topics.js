@@ -197,7 +197,7 @@ function populatePetitionsTable(targetElementId, petitions) {
   const thead = document.createElement('thead');
   thead.innerHTML = `
     <tr>
-      <th>Petition Name</th>
+      <th>Petition </th>
       <th>Signatures</th>
     </tr>
   `;
@@ -216,7 +216,7 @@ function populatePetitionsTable(targetElementId, petitions) {
 
     row.innerHTML = `
       <td><a href="${petitionUrl}" target="_blank" rel="noopener noreferrer">${petitionName}</a></td>
-      <td>${signatureCount}</td>
+      <td>${signatureCount} (<a href="https://petitionmap.unboxedconsulting.com/?petition=${petition.id}" target="_blank" rel="noopener noreferrer">by constituency</a>)</td>
     `;
     tbody.appendChild(row);
   });
@@ -282,8 +282,7 @@ function updateTopicDetailsSection(titleText, type, name) {
       </ul>
     `;
 
-    // Clear bottom left for now
-    topicDetailsLeftBottom.innerHTML = `<h3>Where is ${titleText} most popular?</h3>
+    topicDetailsLeftBottom.innerHTML = `<h3>Where have petitions about ${titleText} been signed??</h3>
     <div id="mapDiv"></div>`; 
     
     // Create the map 
@@ -297,11 +296,79 @@ function updateTopicDetailsSection(titleText, type, name) {
 
     window.dispatchEvent(new Event('resize')); // Trigger a resize event to ensure the map is drawn correctly
 
-    L.geoJSON(window.constituencyBoundariesGeoJSON).addTo(map);
     // this is hacky - fire a resize event to amke the map draw! 
     window.dispatchEvent(new Event('resize'));
 
-    console.log('Constituency boundaries loaded:', window.constituencyBoundariesGeoJSON);
+   
+    // This map shows, in each constituency, the number of signatures (not number of petitions - make this clear). 
+
+    let signaturesInThisTopicByConstituency = {}; 
+    let empties = [];
+    for (const petition of relevantPetitions) {
+      const signaturesInThisPetition = petition.attributes.signatures_by_constituency;
+      if (signaturesInThisPetition == undefined) {
+        // whoops, move on - I think some petitions don't have signatures by constituency 
+        empties.push(petition.id);
+      }
+      else {
+        for (const constituencyObj of signaturesInThisPetition) {
+            const constituencyName = constituencyObj.name;
+            const signatures = constituencyObj.signature_count;
+
+            if (signaturesInThisTopicByConstituency.hasOwnProperty(constituencyName)) { 
+                if (typeof(signatures) !== 'number') {
+                    console.warn(`Non-numeric signature count for constituency ${constituencyName} in petition ${petition.id}:`, signatures);
+                    console.log(constituencyObj)
+                }
+                signaturesInThisTopicByConstituency[constituencyName] += signatures;
+            } else {
+                signaturesInThisTopicByConstituency[constituencyName] = signatures;
+            }
+        }
+      }
+    }
+
+    // console.log(signaturesInThisTopicByConstituency);
+    
+     // work out the colours by getting the range of signature values and mapping each range to a colour 
+    
+    
+    const colourScale = ['#fff7ec','#fee8c8','#fdd49e','#fdbb84','#fc8d59','#ef6548','#d7301f','#b30000','#7f0000'];
+
+    const maxSignatures = Math.max(...Object.values(signaturesInThisTopicByConstituency));
+    const minSignatures = Math.min(...Object.values(signaturesInThisTopicByConstituency));
+    const stepSize = (maxSignatures - minSignatures) / colourScale.length;
+
+    const constituencyColours = {};
+
+    for (const [constituency, count] of Object.entries(signaturesInThisTopicByConstituency)) {
+    // Calculate the index in the colour scale
+    let index = Math.floor((count - minSignatures) / stepSize);
+    
+    // Ensure index stays within bounds of the colourScale array
+    if (index >= colourScale.length) index = colourScale.length - 1;
+    
+    constituencyColours[constituency] = colourScale[index];
+    
+    }
+    
+
+
+    const styleFunc = feature => {
+        return {
+            fillColor: constituencyColours[feature.properties.PCON24NM] || '#fff7ec', // Default color if not found
+            weight: 2,
+            opacity: 1,
+            color: 'white',
+            fillOpacity: 0.8
+        }
+    }
+
+    let geojsonLayer = L.geoJSON(window.constituencyBoundariesGeoJSON, {
+        style: styleFunc
+    });
+
+    geojsonLayer.addTo(map); 
 
     populatePetitionsTable('topicDetailsRight', relevantPetitions);
     topicDetailsSection.style.display = 'block'; // Make the section visible
