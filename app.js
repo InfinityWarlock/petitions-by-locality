@@ -3,6 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 
+
 const app = express();
 const port = 3000;
 
@@ -40,6 +41,10 @@ app.get('/topicsData', (req, res) => {
     res.sendFile(path.join(__dirname, 'data', 'topics_by_petition.json'));
 });
 
+app.get('/constituencyBoundaries', (req, res) => {
+    res.sendFile(path.join(__dirname, 'constant_data', 'Westminster_Parliamentary_Constituencies_July_2024_Boundaries_UK_BUC_4872633423108313063.geojson'));
+})
+
 // This is commented out because it is not needed - instead I just have the "download latest data button"
 
 // app.get('/petition/:petitionId', (req, res) => {
@@ -50,7 +55,6 @@ app.get('/topicsData', (req, res) => {
 app.listen(port, () => {
     console.log(`
 Petitions by Locality running on port ${port}.
-Contains public sector information licensed under the Open Government Licence v3.0.
-Contains Parliamentary information licensed under the Open Parliament Licence v3.0.
+See README.md or about section for acknowledgements and copyright information. 
 `);
 });

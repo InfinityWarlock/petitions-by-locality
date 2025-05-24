@@ -25,6 +25,17 @@ function showView(viewId) {
             link.classList.remove('active');
         }
     });
+
+    // --- NEW: Initialize specific views when they become active ---
+    if (viewId === 'topicView') {
+        // Check if initializeTopicView function exists (from topics.js)
+        if (typeof initializeTopicView === 'function') {
+            initializeTopicView();
+        } else {
+            console.warn("initializeTopicView function not found. Ensure topics.js is loaded and the function is global.");
+        }
+    }
+    // Add similar checks for other views if they need specific initialization
 }
 
 /**

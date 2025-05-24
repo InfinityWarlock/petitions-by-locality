@@ -28,6 +28,7 @@ This is a WIP project.
 
 ## Acknowledgements / licences for data used
 
+
 ### Petitions data
 Contains public sector information licensed under the Open Government Licence v3.0.
 
@@ -39,9 +40,11 @@ Contains Parliamentary information licensed under the [Open Parliament Licence v
 
 ### Constituency boundaries 
 
-They are on [data.gov.uk](https://www.data.gov.uk/dataset/7165b3a0-a1f2-40ff-a8e0-cfc2a573be30/westminster-parliamentary-constituencies-july-2024-boundaries-uk-bgc). 
+They are the [Westminster Parliamentary Constituencies (July 2024) Boundaries UK BUC](geoportal.statistics.gov.uk/datasets/ef63f363ac824b79ae9670744fcc4307_0/) dataset. 
 
-Contains public sector information licensed under the Open Government Licence v3.0.
+Source: Office for National Statistics licensed under the Open Government Licence v.3.0
+
+Contains OS data © Crown copyright and database right 2024.
 
 ## Screenshots
 

@@ -4,8 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>UK Petitions</title>
+
+     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+
     <link rel="stylesheet" href="styles/global.css" />
     <link rel="stylesheet" href="styles/localities.css" />
+    <link rel="stylesheet" href="styles/topics.css" />
 </head>
 <body>
     <header class="navbar">
@@ -94,7 +100,43 @@
     </div>
 
     <div id="topicView" class="content-view" style="display:none;">
-        <p>Topic view</p>
+        <h1>Petitions by Topic</h1>
+        <div class="chart-controls">
+            <label>
+                <input type="radio" name="topicDataType" value="petitionPercentages" checked> Petitions
+            </label>
+            <label>
+                <input type="radio" name="topicDataType" value="signaturePercentages"> Signatures
+            </label>
+            <button id="showAllTopicsBtn" style="display:none;">Show All Topics</button>
+        </div>
+        <div class="charts-container" style="display: flex; flex-wrap: wrap; justify-content: space-around; gap: 20px;">
+            <div style="flex: 1; min-width: 450px; max-width: 600px; height: 400px;">
+                <canvas id="groupedTopicChart"></canvas>
+            </div>
+            <div style="flex: 1; min-width: 450px; max-width: 600px; height: 400px;">
+                <canvas id="individualTopicChart"></canvas>
+            </div>
+        </div>
+
+        <div id="topicDetailsSection" class="topic-details-section">
+            <h2 id="topicDetailsTitle" class="topic-details-title"></h2>
+            <div class="topic-details-content-container">
+                <div id="topicDetailsLeft" class="topic-details-column">
+                    <div id="topicDetailsLeftTop" class="topic-subsection">
+                        <h3>Top Section</h3>
+                        <p>Content for the top left section.</p>
+                    </div>
+                    <div id="topicDetailsLeftBottom" class="topic-subsection">
+                        <h3>Bottom Section</h3>
+                        <p>Content for the bottom left section.</p>
+                    </div>
+                </div>
+                <div id="topicDetailsRight" class="topic-details-column">
+                    <p>Right column content placeholder.</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="aboutView" class="content-view" style="display:block;">
@@ -132,13 +174,16 @@
                 <h2>The topics assigned to petitions</h2>
                 <p>We use the list of topics on the <a href="https://commonslibrary.parliament.uk/research/full-topic-list/">House of Commons library website</a>. We remove two topics: monthly economic indicators and economic indicators.</p>
                 <p><strong>Contains Parliamentary information licensed under the <a href="https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence/">Open Parliament Licence v3.0</a>.</strong></p>
+                <h2>The constituency boundaries</h2>
+                <p>The constiuency boundaries are the <a href=""https://geoportal.statistics.gov.uk/datasets/ef63f363ac824b79ae9670744fcc4307_0/explore?location=55.068500%2C-3.316942%2C6.29">Westminster Parliamentary Constuencies (July 2024) Boundaries UK BUC</a>. </p>
+                <p><strong>Source: Office for National Statistics licensed under the Open Government Licence v.3.0. Contains OS data © Crown copyright and database right 2024.</strong></p>
             </div>
         </div>
     </div>
 
     <footer>
         <p>
-            Contains public sector information licensed under the Open Government Licence v3.0. Contains Parliamentary information licensed under the <a href="https://www.parliament.uk/site-information/copyright-parliament">Open Parliament Licence v3.0</a>.
+            Please see the about section for acknowledgements of data sources and copyright information. Made with ❤️ in Hackney.
         </p>
     </footer>
 
@@ -148,5 +193,10 @@
     </div>
     <script src="scripts/viewSwitcher.js"></script>
     <script src="scripts/localities.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+    <script src="scripts/topics.js"></script>
 </body>
 </html>

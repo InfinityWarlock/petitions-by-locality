@@ -47,6 +47,7 @@ document.getElementById('loadDataBtn').addEventListener('click', async function(
         // Convert rawPetitionsData from array to an object keyed by petition ID for efficient lookup
         if (Array.isArray(rawPetitionsData)) {
             rawPetitionsData = Object.fromEntries(rawPetitionsData.map(p => [p.id, p]));
+            window.rawPetitionsData = rawPetitionsData; // Make it globally accessible
         }
 
         // Fetch topics data from the local server
@@ -55,6 +56,13 @@ document.getElementById('loadDataBtn').addEventListener('click', async function(
             throw new Error(`HTTP error fetching topics data! status: ${topicsResponse.status}`);
         }
         petitionTopics = await topicsResponse.json();
+
+        // Fetch constituency boundaries data 
+        const constituencyBoundariesResponse = await fetch('http://localhost:3000/constituencyBoundaries');
+        if (!constituencyBoundariesResponse.ok) {
+            throw new Error(`HTTP error fetching constituency boundaries data! status: ${constituencyBoundariesResponse.status}`);
+        }
+        window.constituencyBoundariesGeoJSON = await constituencyBoundariesResponse.json(); // Store boundaries data globally
 
         // Once data is loaded, hide the initial load content
         initialLoadContent.style.display = 'none';
@@ -65,11 +73,13 @@ document.getElementById('loadDataBtn').addEventListener('click', async function(
         // Show the locality view and its controls
         showView('localityView'); // Use the showView function from viewSwitcher.js
         controlsContainer.style.display = "flex";
-
+        
         // Populate the constituency selector dropdown
         populateConstituencySelector(Object.keys(signaturesByConstituency));
         // Initially populate topic filter with all topics (before a constituency is selected)
         populateTopicFilter(Object.values(petitionTopics));
+
+        // Save the petitions data to the global variable for later use
 
     } catch (err) {
         // Display a custom error message box instead of a native alert
@@ -554,7 +564,7 @@ function populateTable(data) {
         const topicCell = document.createElement("td");
         topicCell.className = "uk-wide-info-col topic-col"; // Add the topic-col class
         // Add a note if the topic is AI-generated
-        topicCell.textContent = petitionTopic !== 'N/A' ? `${petitionTopic} (AI-generated, may not be accurate)` : 'N/A';
+        topicCell.textContent = petitionTopic !== 'N/A' ? `${petitionTopic}` : 'N/A';
         row.appendChild(topicCell);
 
         // UK Total signatures cell (Column 5)
